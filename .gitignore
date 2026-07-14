@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+Frontend/node_modules/
+Backend/node_modules/
+
+# Local env files
+.env
+Backend/.env
+
+# Build outputs
+Frontend/dist/
+dist/
+
+# OS/System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.log

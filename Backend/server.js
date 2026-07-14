@@ -18,7 +18,20 @@ const PORT = process.env.PORT || 5001;
 // Connect to MongoDB
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/lawai';
 mongoose.connect(mongoUri)
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(async () => {
+    console.log('MongoDB connected successfully');
+    // Drop legacy Firebase unique index if it exists
+    try {
+      const db = mongoose.connection.db;
+      await db.collection('users').dropIndex('firebaseUid_1');
+      console.log('Successfully dropped legacy unique index: firebaseUid_1');
+    } catch (err) {
+      // Ignore if index doesn't exist
+      if (err.code !== 27 && err.codeName !== 'IndexNotFound') {
+        console.log('Note on index configuration:', err.message);
+      }
+    }
+  })
   .catch((err) => console.error('MongoDB connection error:', err));
 
 

@@ -1,43 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Chat from '../models/Chat.js';
 import authMiddleware from '../middleware/auth.js';
 
 const router = express.Router();
-
-// Mock Chat History Data
-const mockHistory = [
-  {
-    id: 'chat-1',
-    title: 'Constitutional Rights Query',
-    preview: 'Can you explain the freedom of speech under the First Amendment?',
-    timestamp: '2026-07-13T10:30:00Z',
-    messages: [
-      { sender: 'user', text: 'Can you explain the freedom of speech under the First Amendment?' },
-      { sender: 'ai', text: 'The First Amendment guarantees freedom of speech, religion, press, assembly, and the right to petition the government. However, it is not absolute and does not protect categories like defamation, incitement, or obscenity.' }
-    ]
-  },
-  {
-    id: 'chat-2',
-    title: 'Tenant Contract Review',
-    preview: 'Look for liability clauses in standard rental contracts...',
-    timestamp: '2026-07-12T14:15:00Z',
-    messages: [
-      { sender: 'user', text: 'Look for liability clauses in standard rental contracts.' },
-      { sender: 'ai', text: 'Standard rental contracts typically contain liability limitations. Look for clauses titled "Limitation of Liability", "Indemnification", or "Hold Harmless". These usually shift risk from landlord to tenant for property damage or personal injuries.' }
-    ]
-  },
-  {
-    id: 'chat-3',
-    title: 'Corporate IP Protection',
-    preview: 'What is the process to file a provisional patent?',
-    timestamp: '2026-07-10T09:00:00Z',
-    messages: [
-      { sender: 'user', text: 'What is the process to file a provisional patent?' },
-      { sender: 'ai', text: 'To file a provisional patent application (PPA), you need to prepare a written description of your invention, drawings if necessary, and pay the filing fee. It gives you "patent pending" status for 12 months, during which you must file a non-provisional application to maintain priority.' }
-    ]
-  }
-];
 
 // Helper to generate JWT
 const generateToken = (user) => {
@@ -136,40 +103,111 @@ router.post('/login', async (req, res) => {
 // PROTECTED API ENDPOINTS
 // ==========================================
 
-// GET /api/history - Return mock chat history (Protected)
-router.get('/history', authMiddleware, (req, res) => {
-  res.json(mockHistory);
+// GET /api/history - Return all chat sessions for authenticated user (Protected)
+router.get('/history', authMiddleware, async (req, res) => {
+  try {
+    const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+    
+    // Map database chats to front-end schema
+    const formattedChats = chats.map(chat => ({
+      id: chat._id,
+      title: chat.title,
+      preview: chat.preview,
+      timestamp: chat.updatedAt.toISOString(),
+      messages: chat.messages
+    }));
+    
+    res.json(formattedChats);
+  } catch (err) {
+    console.error('Fetch history error:', err);
+    res.status(500).json({ error: 'Server error fetching chat history.' });
+  }
+});
+
+// DELETE /api/history/:id - Delete a chat session for authenticated user (Protected)
+router.delete('/history/:id', authMiddleware, async (req, res) => {
+  try {
+    const result = await Chat.deleteOne({ _id: req.params.id, userId: req.user.id });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Chat session not found.' });
+    }
+    
+    res.json({ success: true, message: 'Chat session deleted successfully.' });
+  } catch (err) {
+    console.error('Delete chat error:', err);
+    res.status(500).json({ error: 'Server error deleting chat session.' });
+  }
 });
 
 // POST /api/chat - Handle chat prompt (mock response with delay) (Protected)
-router.post('/chat', authMiddleware, (req, res) => {
-  const { prompt, history = [] } = req.body;
+router.post('/chat', authMiddleware, async (req, res) => {
+  const { prompt, chatId } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required.' });
   }
 
-  // TODO: Forward this request to the FastAPI AI microservice in production.
-  
   // Simulate network/model inference latency
-  setTimeout(() => {
-    // Basic rule-based responses based on prompt keywords to feel alive
-    let reply = `I have received your prompt: "${prompt}". This is a mock AI response simulating a backend assistant. Once integrated, this request will be forwarded to your FastAPI model server for real-time natural language generation.`;
+  setTimeout(async () => {
+    try {
+      // Basic rule-based responses based on prompt keywords to feel alive
+      let reply = `I have received your prompt: "${prompt}". This is a mock AI response simulating a backend assistant. Once integrated, this request will be forwarded to your FastAPI model server for real-time natural language generation.`;
 
-    const normalizedPrompt = prompt.toLowerCase();
-    if (normalizedPrompt.includes('contract') || normalizedPrompt.includes('agreement') || normalizedPrompt.includes('lease')) {
-      reply = `Regarding your inquiry about contracts: Under standard legal frameworks, contracts require mutual assent, offer, acceptance, and consideration. For precise contract review, our system will utilize NLP models to parse liability, termination, and indemnity clauses.`;
-    } else if (normalizedPrompt.includes('patent') || normalizedPrompt.includes('ip') || normalizedPrompt.includes('trademark') || normalizedPrompt.includes('copyright')) {
-      reply = `Intellectual property law covers patents, trademarks, copyrights, and trade secrets. This mock assistant notes that your question concerns IP protection. When connected to the production AI engine, it will analyze your concept against current IP databases.`;
-    } else if (normalizedPrompt.includes('hello') || normalizedPrompt.includes('hi') || normalizedPrompt.includes('hey')) {
-      reply = `Hello! I am your AI Assistant. How can I help you today? You can ask me legal questions, document review tasks, or request text summaries.`;
+      const normalizedPrompt = prompt.toLowerCase();
+      if (normalizedPrompt.includes('contract') || normalizedPrompt.includes('agreement') || normalizedPrompt.includes('lease')) {
+        reply = `Regarding your inquiry about contracts: Under standard legal frameworks, contracts require mutual assent, offer, acceptance, and consideration. For precise contract review, our system will utilize NLP models to parse liability, termination, and indemnity clauses.`;
+      } else if (normalizedPrompt.includes('patent') || normalizedPrompt.includes('ip') || normalizedPrompt.includes('trademark') || normalizedPrompt.includes('copyright')) {
+        reply = `Intellectual property law covers patents, trademarks, copyrights, and trade secrets. This mock assistant notes that your question concerns IP protection. When connected to the production AI engine, it will analyze your concept against current IP databases.`;
+      } else if (normalizedPrompt.includes('hello') || normalizedPrompt.includes('hi') || normalizedPrompt.includes('hey')) {
+        reply = `Hello! I am your AI Assistant. How can I help you today? You can ask me legal questions, document review tasks, or request text summaries.`;
+      }
+
+      const userMessage = { sender: 'user', text: prompt, timestamp: new Date() };
+      const aiMessage = { sender: 'ai', text: reply, timestamp: new Date() };
+      
+      let targetChat;
+
+      if (chatId) {
+        // Appending to an existing chat session
+        targetChat = await Chat.findOne({ _id: chatId, userId: req.user.id });
+        if (targetChat) {
+          targetChat.messages.push(userMessage);
+          targetChat.messages.push(aiMessage);
+          targetChat.preview = reply.substring(0, 60) + (reply.length > 60 ? '...' : '');
+          await targetChat.save();
+        } else {
+          // If chatId was provided but not found, fallback to creating a new one
+          targetChat = new Chat({
+            userId: req.user.id,
+            title: prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
+            preview: reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
+            messages: [userMessage, aiMessage]
+          });
+          await targetChat.save();
+        }
+      } else {
+        // Creating a new chat session
+        targetChat = new Chat({
+          userId: req.user.id,
+          title: prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
+          preview: reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
+          messages: [userMessage, aiMessage]
+        });
+        await targetChat.save();
+      }
+
+      res.json({
+        sender: 'ai',
+        text: reply,
+        timestamp: aiMessage.timestamp.toISOString(),
+        chatId: targetChat._id
+      });
+    } catch (err) {
+      console.error('Error saving chat message to database:', err);
+      // Fallback response if DB save fails
+      res.status(500).json({ error: 'Server error processing chat request.' });
     }
-
-    res.json({
-      sender: 'ai',
-      text: reply,
-      timestamp: new Date().toISOString()
-    });
   }, 1500); // 1.5 seconds mock delay
 });
 

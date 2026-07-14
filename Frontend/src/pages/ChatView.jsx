@@ -107,6 +107,22 @@ export default function ChatView() {
     setSelectedFile(null);
   };
 
+  const handleDeleteChat = async (id) => {
+    try {
+      const res = await authFetch(`/api/history/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setHistory(prev => prev.filter(item => item.id !== id));
+        if (currentChatId === id) {
+          handleNewChat();
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete chat:', err);
+    }
+  };
+
   // File Handling
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -240,7 +256,7 @@ export default function ChatView() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: promptText || `Review uploaded document ${uploadedFileMeta.name}`,
-          history: updatedMessages
+          chatId: currentChatId
         })
       });
 
@@ -249,15 +265,15 @@ export default function ChatView() {
         setMessages(prev => [...prev, aiResponse]);
         setApiStatus({ online: true, message: 'Server Connected' });
 
-        // Update local history array mockingly
+        // Update local history array dynamically with Mongoose database ID
         if (!currentChatId) {
-          const newSessionId = `chat-${Date.now()}`;
+          const newSessionId = aiResponse.chatId;
           setCurrentChatId(newSessionId);
           
           const newHistoryItem = {
             id: newSessionId,
             title: promptText ? (promptText.length > 25 ? promptText.substring(0, 25) + '...' : promptText) : 'Document Analysis',
-            preview: aiResponse.text.substring(0, 50) + '...',
+            preview: aiResponse.text.substring(0, 60) + (aiResponse.text.length > 60 ? '...' : ''),
             timestamp: new Date().toISOString(),
             messages: [...updatedMessages, aiResponse]
           };
@@ -268,7 +284,7 @@ export default function ChatView() {
             if (item.id === currentChatId) {
               return {
                 ...item,
-                preview: aiResponse.text.substring(0, 50) + '...',
+                preview: aiResponse.text.substring(0, 60) + (aiResponse.text.length > 60 ? '...' : ''),
                 timestamp: new Date().toISOString(),
                 messages: [...updatedMessages, aiResponse]
               };
@@ -307,6 +323,7 @@ export default function ChatView() {
         onNewChat={handleNewChat}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        onDeleteChat={handleDeleteChat}
       />
 
       {/* Main Conversation Pane */}

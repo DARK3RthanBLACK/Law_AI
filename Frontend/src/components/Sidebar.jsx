@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, MessageSquare, Settings, LogOut, X, Scale, User } from 'lucide-react';
+import { Plus, MessageSquare, Settings, LogOut, X, Scale, User, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ 
@@ -9,7 +9,8 @@ export default function Sidebar({
   onSelectChat, 
   onNewChat, 
   isOpen, 
-  onClose 
+  onClose,
+  onDeleteChat
 }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -79,24 +80,43 @@ export default function Sidebar({
             history.map((chat) => {
               const isActive = currentChatId === chat.id;
               return (
-                <button
+                <div
                   key={chat.id}
-                  onClick={() => {
-                    onSelectChat(chat);
-                    onClose();
-                  }}
-                  className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150 cursor-pointer ${
+                  className={`relative group/item w-full flex items-center justify-between rounded-lg transition-colors duration-150 ${
                     isActive 
                       ? 'bg-accent-blue/10 text-white border border-accent-blue/25' 
-                      : 'text-slate-450 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                      : 'hover:bg-slate-800/40 border border-transparent'
                   }`}
                 >
-                  <MessageSquare size={16} className={`mt-0.5 flex-shrink-0 ${isActive ? 'text-accent-blue' : 'text-slate-550'}`} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{chat.title}</div>
-                    <div className="text-xs text-slate-500 truncate mt-0.5">{chat.preview}</div>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => {
+                      onSelectChat(chat);
+                      onClose();
+                    }}
+                    className={`flex-grow flex items-start gap-3 px-3 py-2.5 text-left cursor-pointer min-w-0 ${
+                      isActive ? 'text-white' : 'text-slate-450 hover:text-slate-200'
+                    }`}
+                  >
+                    <MessageSquare size={16} className={`mt-0.5 flex-shrink-0 ${isActive ? 'text-accent-blue' : 'text-slate-550'}`} />
+                    <div className="flex-1 min-w-0 pr-4">
+                      <div className="text-sm font-medium truncate">{chat.title}</div>
+                      <div className="text-xs text-slate-500 truncate mt-0.5">{chat.preview}</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onDeleteChat) {
+                        onDeleteChat(chat.id);
+                      }
+                    }}
+                    className="absolute right-2 opacity-0 group-hover/item:opacity-100 p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-md transition-all duration-150 cursor-pointer z-10"
+                    title="Delete Session"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               );
             })
           )}

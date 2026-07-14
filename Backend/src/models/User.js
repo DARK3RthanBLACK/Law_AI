@@ -26,26 +26,18 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Pre-save hook to hash password before saving to database
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   const user = this;
   
-  // Only hash password if it is new or modified
   if (!user.isModified('password')) {
-    return next();
+    return;
   }
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(user.password, salt);
-    user.password = hash;
-    next();
-  } catch (err) {
-    next(err);
-  }
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(user.password, salt);
+  user.password = hash;
 });
 
-// Helper method to compare candidate password with hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

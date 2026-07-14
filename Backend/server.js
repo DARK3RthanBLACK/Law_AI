@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import mongoose from 'mongoose';
 import apiRouter from './src/routes/api.js';
 
@@ -35,14 +36,23 @@ app.get('/health', (req, res) => {
 
 // Serve static files from the React frontend build
 const frontendDist = path.join(__dirname, '../Frontend/dist');
-app.use(express.static(frontendDist));
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+} else {
+  console.warn(`WARNING: Frontend build folder not found at ${frontendDist}. Static file serving is disabled.`);
+}
 
 // Fallback to React Router index.html for SPA support
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
     return next();
   }
-  res.sendFile(path.join(frontendDist, 'index.html'));
+  const indexPath = path.join(frontendDist, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend build files not found. Please ensure that the frontend was compiled during deployment.');
+  }
 });
 
 app.listen(PORT, () => {

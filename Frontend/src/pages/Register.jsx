@@ -4,6 +4,7 @@ import { Scale, User, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lu
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
+import AnimatedScaleBackground from '../components/AnimatedScaleBackground';
 
 export default function Register() {
   const { register } = useAuth();

@@ -4,6 +4,7 @@ import { Scale, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-r
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
+import AnimatedScaleBackground from '../components/AnimatedScaleBackground';
 
 export default function Login() {
   const { login } = useAuth();

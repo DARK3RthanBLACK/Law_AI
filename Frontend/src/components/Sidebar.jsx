@@ -1,10 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import { Plus, MessageSquare, Settings, LogOut, X, Scale, User, Trash2 } from 'lucide-react';
-=======
-import { Plus, MessageSquare, Settings, LogOut, X, Scale, User } from 'lucide-react';
->>>>>>> 67a692a3637ea84ebfef1355926ab6f87824ad6e
 import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ 
@@ -139,17 +135,8 @@ export default function Sidebar({
               )}
             </div>
             <div className="flex-1 min-w-0">
-<<<<<<< HEAD
               <div className="text-sm font-medium text-slate-250 truncate">{user?.name || 'Legal User'}</div>
               <div className="text-xs text-slate-500 truncate">{user?.email || 'user@lawai.com'}</div>
-=======
-              <div className="text-sm font-medium text-slate-250 truncate">
-                {user ? 'Logged In' : 'Guest Account'}
-              </div>
-              <div className="text-xs text-slate-500 truncate">
-                {user?.email || 'guest@lawai.com'}
-              </div>
->>>>>>> 67a692a3637ea84ebfef1355926ab6f87824ad6e
             </div>
           </div>
 
@@ -159,14 +146,7 @@ export default function Sidebar({
               <span>Settings</span>
             </button>
             <button 
-<<<<<<< HEAD
               onClick={logout} 
-=======
-              onClick={() => {
-                logout();
-                navigate('/');
-              }} 
->>>>>>> 67a692a3637ea84ebfef1355926ab6f87824ad6e
               className="flex items-center gap-1.5 py-1.5 px-2 text-slate-450 hover:text-red-400 transition-colors rounded hover:bg-slate-800 cursor-pointer justify-center"
             >
               <LogOut size={14} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Scale, FileText } from 'lucide-react';
+import { User, Gavel, FileText } from 'lucide-react';
 
 export default function ChatBubble({ message, isTyping = false }) {
   const isAi = message?.sender === 'ai';
@@ -9,7 +9,7 @@ export default function ChatBubble({ message, isTyping = false }) {
       {/* AI Profile Avatar */}
       {isAi && (
         <div className="w-8 h-8 rounded-lg bg-accent-blue/10 border border-accent-blue/20 text-accent-blue flex items-center justify-center flex-shrink-0 self-end">
-          <Scale size={15} />
+          <Gavel size={15} />
         </div>
       )}
 

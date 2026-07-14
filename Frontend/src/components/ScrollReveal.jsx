@@ -37,27 +37,27 @@ export default function ScrollReveal({
 
   const getDirectionClass = () => {
     if (isIntersecting) {
-      return 'opacity-100 translate-x-0 translate-y-0 scale-100';
+      return 'opacity-100 translate-x-0 translate-y-0 scale-100 blur-none';
     }
     
     switch (direction) {
       case 'up':
-        return 'opacity-0 translate-y-10 scale-[0.98]';
+        return 'opacity-0 translate-y-12 scale-[0.96] blur-[4px]';
       case 'down':
-        return 'opacity-0 -translate-y-10 scale-[0.98]';
+        return 'opacity-0 -translate-y-12 scale-[0.96] blur-[4px]';
       case 'left':
-        return 'opacity-0 -translate-x-10';
+        return 'opacity-0 -translate-x-12 blur-[4px]';
       case 'right':
-        return 'opacity-0 translate-x-10';
+        return 'opacity-0 translate-x-12 blur-[4px]';
       case 'fade':
       default:
-        return 'opacity-0';
+        return 'opacity-0 blur-[4px]';
     }
   };
 
   const style = {
-    transitionProperty: 'opacity, transform',
-    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)', // custom easeOutExpo timing
+    transitionProperty: 'opacity, transform, filter',
+    transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)', // smoother premium easing
     transitionDuration: `${duration}ms`,
     transitionDelay: `${delay}ms`,
   };

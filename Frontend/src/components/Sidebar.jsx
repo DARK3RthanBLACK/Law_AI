@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, MessageSquare, Settings, LogOut, X, Scale, User, Trash2 } from 'lucide-react';
+import { Plus, MessageSquare, Settings, LogOut, X, Gavel, User, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -40,7 +40,7 @@ export default function Sidebar({
             className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div className="p-1.5 bg-accent-blue/10 rounded-md text-accent-blue border border-accent-blue/20">
-              <Scale size={18} />
+              <Gavel size={18} />
             </div>
             <span className="font-display font-bold text-lg tracking-tight text-white">
               Law<span className="text-accent-blue">AI</span>

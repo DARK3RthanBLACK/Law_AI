@@ -45,7 +45,7 @@ export default function FaqPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18 animate-fade-in">
       <Header />
 
       <section className="py-20 md:py-28 relative flex-1 flex flex-col justify-center">

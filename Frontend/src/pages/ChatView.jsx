@@ -16,10 +16,12 @@ import {
 import Sidebar from '../components/Sidebar';
 import ChatBubble from '../components/ChatBubble';
 import Button from '../components/Button';
+import { useAuth } from '../context/AuthContext';
 
 export default function ChatView() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { token } = useAuth();
   
   // State
   const [history, setHistory] = useState([]);
@@ -47,7 +49,9 @@ export default function ChatView() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch('/api/history');
+      const res = await fetch('/api/history', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
       if (res.ok) {
         const data = await res.json();
         setHistory(data);
@@ -191,6 +195,7 @@ export default function ChatView() {
 
         const uploadRes = await fetch('/api/upload', {
           method: 'POST',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
           body: formData
         });
 
@@ -235,7 +240,10 @@ export default function ChatView() {
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           prompt: promptText || `Review uploaded document ${uploadedFileMeta.name}`,
           history: updatedMessages

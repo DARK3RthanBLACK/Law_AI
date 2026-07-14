@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, MessageSquare, Settings, LogOut, X, Scale, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ 
   history = [], 
@@ -11,6 +12,7 @@ export default function Sidebar({
   onClose 
 }) {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -107,8 +109,12 @@ export default function Sidebar({
               <User size={18} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-slate-250 truncate">Trial Account</div>
-              <div className="text-xs text-slate-500 truncate">trial@lawai.com</div>
+              <div className="text-sm font-medium text-slate-250 truncate">
+                {user ? 'Logged In' : 'Guest Account'}
+              </div>
+              <div className="text-xs text-slate-500 truncate">
+                {user?.email || 'guest@lawai.com'}
+              </div>
             </div>
           </div>
 
@@ -118,11 +124,14 @@ export default function Sidebar({
               <span>Settings</span>
             </button>
             <button 
-              onClick={() => navigate('/')} 
+              onClick={() => {
+                logout();
+                navigate('/');
+              }} 
               className="flex items-center gap-1.5 py-1.5 px-2 text-slate-450 hover:text-red-400 transition-colors rounded hover:bg-slate-800 cursor-pointer justify-center"
             >
               <LogOut size={14} />
-              <span>Exit App</span>
+              <span>Sign Out</span>
             </button>
           </div>
         </div>

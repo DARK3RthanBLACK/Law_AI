@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Scale, ChevronRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import Button from './Button';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const isActive = (path) => location.pathname === path;
 
@@ -60,20 +62,41 @@ export default function Header() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/chat')}
-            className="text-sm font-medium text-slate-350 hover:text-white transition-colors cursor-pointer"
-          >
-            Sign In
-          </button>
-          <Button 
-            variant="primary" 
-            size="sm"
-            onClick={() => navigate('/chat')}
-            className="gap-1 px-4 py-1.5"
-          >
-            Launch App <ChevronRight size={14} />
-          </Button>
+          {user ? (
+            <>
+              <button 
+                onClick={logout}
+                className="text-sm font-medium text-slate-350 hover:text-white transition-colors cursor-pointer"
+              >
+                Sign Out
+              </button>
+              <Button 
+                variant="primary" 
+                size="sm"
+                onClick={() => navigate('/chat')}
+                className="gap-1 px-4 py-1.5"
+              >
+                Go to App <ChevronRight size={14} />
+              </Button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => navigate('/login')}
+                className="text-sm font-medium text-slate-350 hover:text-white transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+              <Button 
+                variant="primary" 
+                size="sm"
+                onClick={() => navigate('/chat')}
+                className="gap-1 px-4 py-1.5"
+              >
+                Launch App <ChevronRight size={14} />
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

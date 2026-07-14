@@ -7,7 +7,13 @@ import {
   Search, 
   Scale,
   Info,
-  Mic
+  Mic,
+  ChevronLeft,
+  ChevronRight,
+  Lightbulb,
+  PenTool,
+  Flag,
+  MessageSquare
 } from 'lucide-react';
 import Header from '../components/Header';
 import Button from '../components/Button';
@@ -20,13 +26,48 @@ export default function LandingPage() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
   const { language, t } = useLanguage();
+  const [startIndex, setStartIndex] = useState(0);
 
-  const suggestionChips = [
-    t('suggestTenant'),
-    t('suggestPatent'),
-    t('suggestNDA'),
-    t('suggestSpeech')
+  const cards = [
+    {
+      title: language === 'en' ? "Standard Tenant Liability:" : "मानक किरायेदार देयता:",
+      desc: language === 'en' ? "Explain common rules. what is the regliation..." : "सामान्य नियमों की व्याख्या करें। नियम क्या है...",
+      icon: Scale,
+      prompt: t('suggestTenant')
+    },
+    {
+      title: language === 'en' ? "Patent Application:" : "पेटेंट आवेदन:",
+      desc: language === 'en' ? "What is the provisional patent process?" : "अनंतिम पेटेंट प्रक्रिया क्या है?",
+      icon: Lightbulb,
+      prompt: t('suggestPatent')
+    },
+    {
+      title: language === 'en' ? "Sample NDA Clause:" : "एनडीए खंड नमूना:",
+      desc: language === 'en' ? "Review a typical non-disclosure termination..." : "एक विशिष्ट गैर-प्रकटीकरण समाप्ति की समीक्षा करें...",
+      icon: PenTool,
+      prompt: t('suggestNDA')
+    },
+    {
+      title: language === 'en' ? "First Amendment" : "प्रथम संशोधन",
+      desc: language === 'en' ? "Review standard freedom of speech exemptions." : "मानक वाक् स्वतंत्रता अपवादों की समीक्षा करें।",
+      icon: [Flag, MessageSquare],
+      prompt: t('suggestSpeech')
+    }
   ];
+
+  const handlePrevCard = () => {
+    setStartIndex((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
+  };
+
+  const handleNextCard = () => {
+    setStartIndex((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+  };
+
+  const visibleCards = [];
+  for (let i = 0; i < cards.length; i++) {
+    const cardIndex = (startIndex + i) % cards.length;
+    visibleCards.push(cards[cardIndex]);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -119,45 +160,44 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-slate-100 flex flex-col pt-18 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18 relative overflow-hidden">
       <Header />
 
       {/* Hero Section */}
-      <section 
-        className="relative py-20 md:py-36 overflow-hidden flex-1 flex flex-col justify-center bg-black bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.70)), url('/lady_of_justice.png')",
-          backgroundSize: 'min(90vw, 800px)'
-        }}
-      >
+      <section className="relative py-24 md:py-36 overflow-hidden flex-1 flex flex-col justify-center bg-slate-950">
+        {/* Background Open Book Container with bottom blend fade */}
+        <div 
+          className="absolute inset-0 z-0 bg-center bg-no-repeat pointer-events-none opacity-35 select-none"
+          style={{
+            backgroundImage: "linear-gradient(to bottom, rgba(8, 11, 17, 0) 40%, rgba(8, 11, 17, 1) 98%), url('/open_golden_book.png')",
+            backgroundSize: 'contain',
+            backgroundPosition: 'center 15%',
+          }}
+        />
+
         {/* Background glow effects */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-accent-blue/5 rounded-full blur-[140px] animate-pulse-glow pointer-events-none z-0" />
 
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10 w-full">
-          {/* Badge */}
-          <ScrollReveal direction="up" delay={100}>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold rounded-full mb-6">
-              <Sparkles size={12} />
-              <span>{language === 'en' ? 'AI-Powered Legal Research Engine' : 'एआई-संचालित कानूनी अनुसंधान इंजन'}</span>
-            </div>
-          </ScrollReveal>
+        {/* Dynamic 4-Point Sparkle Star decoration */}
+        <div className="absolute bottom-16 right-20 pointer-events-none hidden md:block select-none z-20">
+          <svg viewBox="0 0 100 100" fill="currentColor" className="w-16 h-16 text-[#dfc27d]/20 animate-pulse-glow">
+            <path d="M50 0C50 27.6142 27.6142 50 0 50C27.6142 50 50 72.3858 50 100C50 72.3858 72.3858 50 100 50C72.3858 50 50 27.6142 50 0Z" />
+          </svg>
+        </div>
 
+        <div className="max-w-6xl mx-auto px-6 text-center relative z-25 w-full">
           {/* Heading */}
           <ScrollReveal direction="up" delay={200}>
-            <h1 className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight leading-tight sm:leading-none mb-6">
+            <h1 className="font-serif-gold font-normal text-5xl sm:text-6.5xl text-[#e2c792] tracking-wide leading-[1.25] mb-6">
               {language === 'en' ? (
                 <>
                   Understand Legal Queries & <br />
-                  <span className="bg-gradient-to-r from-accent-blue via-blue-400 to-accent-emerald bg-clip-text text-transparent">
-                    Contracts Instantly
-                  </span>
+                  Contracts <span className="font-sans font-bold bg-gradient-to-r from-cyan-400 to-teal-300 bg-clip-text text-transparent" style={{ textShadow: '0 0 25px rgba(34, 211, 238, 0.45)' }}>Instantly</span>
                 </>
               ) : (
                 <>
                   कानूनी प्रश्नों और अनुबंधों को <br />
-                  <span className="bg-gradient-to-r from-accent-blue via-blue-400 to-accent-emerald bg-clip-text text-transparent">
-                    तुरंत समझें
-                  </span>
+                  <span className="font-sans font-bold bg-gradient-to-r from-cyan-400 to-teal-300 bg-clip-text text-transparent" style={{ textShadow: '0 0 25px rgba(34, 211, 238, 0.45)' }}>तुरंत समझें</span>
                 </>
               )}
             </h1>
@@ -165,19 +205,19 @@ export default function LandingPage() {
 
           {/* Subheading */}
           <ScrollReveal direction="up" delay={300}>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-slate-300 text-sm max-w-xl sm:max-w-2xl mx-auto mb-10 leading-relaxed">
               {t('heroSubtitle')}
             </p>
           </ScrollReveal>
 
           {/* Prominent Search/Prompt Bar */}
           <ScrollReveal direction="up" delay={400}>
-            <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-6">
-              <div className={`glass p-2 rounded-xl flex items-center shadow-2xl shadow-black/80 border transition-all duration-300 ${
-                isListening ? 'border-red-500/50 bg-red-950/10' : 'border-slate-800'
+            <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-16">
+              <div className={`glass p-1.5 pl-4 rounded-full flex items-center shadow-2xl shadow-black/90 border transition-all duration-300 ${
+                isListening ? 'border-red-500/50 bg-red-950/10' : 'border-slate-800/80 hover:border-slate-750'
               }`}>
-                <div className={`pl-3 ${isListening ? 'text-red-400 animate-pulse' : 'text-slate-500'}`}>
-                  <Search size={20} />
+                <div className={`pl-1 ${isListening ? 'text-red-400 animate-pulse' : 'text-slate-500'}`}>
+                  <Search size={18} />
                 </div>
                 <input
                   type="text"
@@ -185,56 +225,102 @@ export default function LandingPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   disabled={isListening}
-                  className="flex-1 bg-transparent border-0 outline-none text-white text-sm px-3 placeholder-slate-500 h-10 w-full focus:ring-0"
+                  className="flex-1 bg-transparent border-0 outline-none text-white text-sm px-3 placeholder-slate-550 h-10 w-full focus:ring-0"
                 />
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5 pr-1">
                   <button
                     type="button"
                     onClick={handleMicClick}
-                    className={`p-2 rounded-lg transition-all cursor-pointer ${
+                    className={`p-2 rounded-full transition-all cursor-pointer ${
                       isListening 
                         ? 'text-red-500 bg-red-500/10 border border-red-500/35 animate-mic-pulse' 
                         : 'text-slate-450 hover:text-slate-200 hover:bg-slate-900'
                     }`}
                     title={isListening ? (language === 'en' ? "Stop listening" : "सुनना बंद करें") : (language === 'en' ? "Voice search" : "आवाज खोज")}
                   >
-                    <Mic size={18} />
+                    <Mic size={16} />
                   </button>
                   <button
                     type="button"
                     onClick={() => navigate('/chat', { state: { triggerUpload: true } })}
-                    className="p-2 text-slate-450 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors cursor-pointer"
+                    className="p-2 text-slate-450 hover:text-slate-200 hover:bg-slate-900 rounded-full transition-colors cursor-pointer"
                     title={language === 'en' ? "Upload Document" : "दस्तावेज़ अपलोड करें"}
                     disabled={isListening}
                   >
-                    <Upload size={18} />
+                    <Upload size={16} />
                   </button>
-                  <Button 
+                  <button 
                     type="submit" 
-                    variant="primary" 
-                    size="sm" 
-                    className="h-10 px-4 gap-1.5"
                     disabled={isListening}
+                    className="h-10 px-5 gap-1.5 bg-gradient-to-r from-accent-blue to-cyan-400 hover:brightness-110 text-slate-950 font-semibold text-sm rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 shadow-md active:scale-95 shrink-0"
                   >
-                    {language === 'en' ? 'Analyze' : 'विश्लेषण करें'} <ArrowRight size={14} />
-                  </Button>
+                    <span>{language === 'en' ? 'Analyze' : 'विश्लेषण करें'}</span>
+                    <ArrowRight size={14} />
+                  </button>
                 </div>
               </div>
             </form>
           </ScrollReveal>
 
-          {/* Suggestion Chips */}
+          {/* Suggestion Cards Carousel */}
           <ScrollReveal direction="up" delay={500}>
-            <div className="flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
-              {suggestionChips.map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleChipClick(chip)}
-                  className="text-xs px-3 py-1.5 bg-slate-900/80 hover:bg-slate-850 border border-slate-800/80 hover:border-slate-700 text-slate-400 hover:text-slate-200 rounded-full transition-all duration-150 cursor-pointer"
-                >
-                  {chip}
-                </button>
-              ))}
+            <div className="relative max-w-5xl mx-auto px-10 flex items-center justify-between group">
+              {/* Left Arrow Button */}
+              <button 
+                type="button"
+                onClick={handlePrevCard}
+                className="absolute left-0 p-2.5 rounded-full border border-slate-900 bg-slate-950/80 hover:bg-slate-900 text-slate-450 hover:text-white cursor-pointer transition-all active:scale-90 z-10"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              {/* Cards row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full py-4 text-left">
+                {visibleCards.map((card, idx) => {
+                  const CardIcon = card.icon;
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => handleChipClick(card.prompt)}
+                      className={`glass-card p-5 rounded-xl border border-slate-900 hover:border-accent-blue/35 bg-[#0e1320]/60 backdrop-blur-md cursor-pointer transition-all duration-300 min-h-[160px] flex flex-col justify-between group/card ${
+                        idx >= 1 ? 'hidden sm:flex' : ''
+                      } ${
+                        idx >= 2 ? 'hidden md:flex' : ''
+                      } ${
+                        idx >= 3 ? 'hidden lg:flex' : ''
+                      }`}
+                    >
+                      <div>
+                        {/* Dual-tone gold & cyan line-art icon */}
+                        <div className="p-2 w-fit rounded-lg bg-accent-blue/5 border border-accent-blue/15 text-accent-blue mb-4 flex items-center gap-1.5 group-hover/card:bg-accent-blue/10 group-hover/card:border-accent-blue/25 transition-all">
+                          {Array.isArray(CardIcon) ? (
+                            CardIcon.map((Icon, i) => (
+                              <Icon key={i} size={18} className="text-accent-blue group-hover/card:text-cyan-400 transition-colors duration-300" />
+                            ))
+                          ) : (
+                            <CardIcon size={18} className="text-accent-blue group-hover/card:text-cyan-400 transition-colors duration-300" />
+                          )}
+                        </div>
+                        <h3 className="text-xs font-bold text-white mb-1.5 tracking-wide group-hover/card:text-accent-blue transition-colors duration-200">
+                          {card.title}
+                        </h3>
+                        <p className="text-slate-400 text-[11px] leading-relaxed group-hover/card:text-slate-350">
+                          {card.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Right Arrow Button */}
+              <button 
+                type="button"
+                onClick={handleNextCard}
+                className="absolute right-0 p-2.5 rounded-full border border-slate-900 bg-slate-950/80 hover:bg-slate-900 text-slate-450 hover:text-white cursor-pointer transition-all active:scale-90 z-10"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
           </ScrollReveal>
         </div>
@@ -248,7 +334,7 @@ export default function LandingPage() {
               <div className="p-1.5 bg-accent-blue/10 rounded-md text-accent-blue border border-accent-blue/20">
                 <Scale size={16} />
               </div>
-              <span className="font-display font-bold text-lg text-white">LawAI</span>
+              <span className="font-sans font-bold text-lg text-white">LawAI</span>
             </div>
             <p className="text-slate-500 text-xs max-w-sm leading-relaxed">
               LawAI provides automated AI insights and document reviews. We make legal terms understandable and clear, but do not provide legal representation.

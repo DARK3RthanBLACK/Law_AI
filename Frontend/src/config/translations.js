@@ -13,10 +13,10 @@ export const translations = {
     // Hero Section
     heroBadge: "AI Legal Assistant",
     heroTitle: "Democratizing Legal Access Through AI",
-    heroSubtitle: "Get instant consultation on legal questions, review complex agreements, and drafts in seconds using advanced natural language intelligence.",
+    heroSubtitle: "Meet LawAI: The private, fast, and accessible AI Legal Research Engine. It parses complex regulations, extracts contract liabilities, and explains rights in simple terms.",
     getStarted: "Get Started Now",
     analyzeDoc: "Analyze Documents",
-    searchPlaceholder: "Ask a legal question (e.g., standard tenant liability rules)...",
+    searchPlaceholder: "Ask a legal question (e.g., \"What is a provisional patent?\")...",
     searchButton: "Ask AI",
 
     // Suggestion Chips (Landing)
@@ -88,10 +88,10 @@ export const translations = {
     // Hero Section
     heroBadge: "एआई कानूनी सहायक",
     heroTitle: "एआई के माध्यम से कानूनी पहुंच का लोकतंत्रीकरण",
-    heroSubtitle: "उन्नत प्राकृतिक भाषा खुफिया का उपयोग करके कानूनी प्रश्नों पर तुरंत परामर्श प्राप्त करें, जटिल समझौतों की समीक्षा करें और सेकंडों में ड्राफ्ट तैयार करें।",
+    heroSubtitle: "लॉएआई (LawAI) से मिलें: निजी, तेज़ और सुलभ एआई कानूनी अनुसंधान इंजन। यह जटिल नियमों को पार्स करता है, अनुबंध देनदारियों को निकालता है, और सरल शब्दों में अधिकारों की व्याख्या करता है।",
     getStarted: "अभी शुरू करें",
     analyzeDoc: "दस्तावेज़ों का विश्लेषण करें",
-    searchPlaceholder: "एक कानूनी प्रश्न पूछें (जैसे, मानक किरायेदार देयता नियम)...",
+    searchPlaceholder: "एक कानूनी प्रश्न पूछें (जैसे, \"अनंतिम पेटेंट क्या है?\")...",
     searchButton: "एआई से पूछें",
 
     // Suggestion Chips (Landing)

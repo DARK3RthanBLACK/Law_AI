@@ -3,14 +3,16 @@
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-serif-gold: 'Cormorant Garamond', Georgia, serif;
+  --font-title: 'Cinzel', Georgia, serif;
   
   --color-accent-blue: #d4af37; /* Divine Gold as Primary */
   --color-accent-blue-hover: #b59023;
   --color-accent-emerald: #6366f1; /* Deep Royal Indigo-Violet as Secondary */
   --color-accent-emerald-hover: #4f46e5;
   
-  --color-slate-900: #0a0a0a; /* Dark charcoal */
-  --color-slate-950: #000000; /* Pure black background */
+  --color-slate-900: #111520; /* Dark slate-charcoal card bg */
+  --color-slate-950: #080b11; /* Deep dark slate page background */
 }
 
 /* Custom modern scrollbars */

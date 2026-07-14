@@ -32,12 +32,13 @@ export default function Header() {
     <header className="fixed top-0 left-0 w-full z-50 glass border-b border-slate-900/50">
       <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="p-2 bg-accent-blue/10 rounded-lg border border-accent-blue/20 text-accent-blue group-hover:scale-105 transition-transform duration-250">
-            <Scale size={20} />
+        <Link to="/" className="flex items-center gap-2 group">
+          <div className="p-1.5 bg-[#1e293b]/60 rounded-lg border border-slate-800 text-accent-blue group-hover:scale-105 transition-transform duration-200 shadow-md">
+            <Scale size={18} />
           </div>
-          <span className="font-display font-bold text-xl tracking-tight text-white">
-            Law<span className="text-accent-blue">AI</span>
+          <span className="font-sans font-bold text-lg tracking-tight">
+            <span className="text-white">Law</span>
+            <span className="text-accent-blue">AI</span>
           </span>
         </Link>
 
@@ -46,7 +47,7 @@ export default function Header() {
           <Link 
             to="/" 
             className={`text-sm font-medium transition-colors ${
-              isActive('/') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
+              isActive('/') ? 'text-accent-blue font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             {language === 'en' ? 'Home' : 'मुख्य पृष्ठ'}
@@ -54,7 +55,7 @@ export default function Header() {
           <Link 
             to="/features" 
             className={`text-sm font-medium transition-colors ${
-              isActive('/features') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
+              isActive('/features') ? 'text-accent-blue font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             {t('features')}
@@ -62,7 +63,7 @@ export default function Header() {
           <Link 
             to="/how-it-works" 
             className={`text-sm font-medium transition-colors ${
-              isActive('/how-it-works') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
+              isActive('/how-it-works') ? 'text-accent-blue font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             {t('howItWorks')}
@@ -70,7 +71,7 @@ export default function Header() {
           <Link 
             to="/faq" 
             className={`text-sm font-medium transition-colors ${
-              isActive('/faq') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
+              isActive('/faq') ? 'text-accent-blue font-semibold' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             {t('faq')}
@@ -82,7 +83,7 @@ export default function Header() {
           {/* Language Switcher Toggle */}
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer shadow-inner"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-slate-700 text-slate-350 hover:text-white text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer shadow-inner"
             title="Switch Language / भाषा बदलें"
           >
             <Globe size={13} className="text-accent-blue" />
@@ -90,13 +91,13 @@ export default function Header() {
           </button>
 
           {isAuthenticated ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {/* User Profile Badge */}
-              <div className="flex items-center gap-2.5">
-                <div className="h-8.5 w-8.5 rounded-full bg-accent-blue/10 border border-accent-blue/25 text-accent-blue flex items-center justify-center font-display font-bold text-xs select-none shadow-sm shadow-accent-blue/5">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full border border-accent-blue/35 bg-[#1d2433]/70 text-accent-blue flex items-center justify-center font-sans font-bold text-xs select-none shadow-sm">
                   {getInitials(user?.name)}
                 </div>
-                <span className="hidden sm:inline text-sm font-medium text-slate-200">
+                <span className="hidden sm:inline text-sm font-medium text-slate-300">
                   {user?.name?.split(' ')[0]}
                 </span>
               </div>
@@ -104,20 +105,19 @@ export default function Header() {
               {/* Logout Button */}
               <button 
                 onClick={logout}
-                className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/5 rounded-lg border border-transparent hover:border-red-500/10 transition-all duration-200 cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-slate-200 transition-all duration-200 cursor-pointer"
                 title={t('logout')}
               >
                 <LogOut size={16} />
               </button>
 
-              <Button 
-                variant="primary" 
-                size="sm"
+              <button 
                 onClick={() => navigate('/chat')}
-                className="gap-1 px-4 py-1.5"
+                className="flex items-center gap-1 px-4 py-1.5 bg-accent-blue hover:bg-accent-blue-hover text-slate-950 font-semibold text-xs rounded-full cursor-pointer transition-all duration-200 shadow-md active:scale-95"
               >
-                {language === 'en' ? 'Workspace' : 'कार्यस्थान'} <ChevronRight size={14} />
-              </Button>
+                <span>{language === 'en' ? 'Workspace' : 'कार्यस्थान'}</span>
+                <span>&rarr;</span>
+              </button>
             </div>
           ) : (
             <>
@@ -127,14 +127,13 @@ export default function Header() {
               >
                 {t('login')}
               </button>
-              <Button 
-                variant="primary" 
-                size="sm"
+              <button 
                 onClick={() => navigate('/chat')}
-                className="gap-1 px-4 py-1.5"
+                className="flex items-center gap-1 px-4 py-1.5 bg-accent-blue hover:bg-accent-blue-hover text-slate-950 font-semibold text-xs rounded-full cursor-pointer transition-all duration-200 shadow-md active:scale-95"
               >
-                {language === 'en' ? 'Launch App' : 'ऐप खोलें'} <ChevronRight size={14} />
-              </Button>
+                <span>{language === 'en' ? 'Launch App' : 'ऐप खोलें'}</span>
+                <span>&rarr;</span>
+              </button>
             </>
           )}
         </div>

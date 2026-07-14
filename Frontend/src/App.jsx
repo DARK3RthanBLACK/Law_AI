@@ -7,6 +7,7 @@ import FaqPage from './pages/FaqPage.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -21,8 +22,9 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <LanguageProvider>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
@@ -43,6 +45,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+  </LanguageProvider>
   );
 }
 

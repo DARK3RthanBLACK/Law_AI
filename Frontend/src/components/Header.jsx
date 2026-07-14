@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Scale, ChevronRight, LogOut, User } from 'lucide-react';
+import { Scale, ChevronRight, LogOut, User, Globe } from 'lucide-react';
 import Button from './Button';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
+
+  const toggleLanguage = () => {
+    setLanguage(prev => (prev === 'en' ? 'hi' : 'en'));
+  };
 
   const isActive = (path) => location.pathname === path;
 
@@ -43,7 +49,7 @@ export default function Header() {
               isActive('/') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
             }`}
           >
-            Home
+            {language === 'en' ? 'Home' : 'मुख्य पृष्ठ'}
           </Link>
           <Link 
             to="/features" 
@@ -51,7 +57,7 @@ export default function Header() {
               isActive('/features') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
             }`}
           >
-            Features
+            {t('features')}
           </Link>
           <Link 
             to="/how-it-works" 
@@ -59,7 +65,7 @@ export default function Header() {
               isActive('/how-it-works') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
             }`}
           >
-            How It Works
+            {t('howItWorks')}
           </Link>
           <Link 
             to="/faq" 
@@ -67,12 +73,22 @@ export default function Header() {
               isActive('/faq') ? 'text-accent-blue' : 'text-slate-400 hover:text-slate-100'
             }`}
           >
-            FAQ
+            {t('faq')}
           </Link>
         </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
+          {/* Language Switcher Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer shadow-inner"
+            title="Switch Language / भाषा बदलें"
+          >
+            <Globe size={13} className="text-accent-blue" />
+            <span>{language === 'en' ? 'EN' : 'हि'}</span>
+          </button>
+
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
               {/* User Profile Badge */}
@@ -89,7 +105,7 @@ export default function Header() {
               <button 
                 onClick={logout}
                 className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/5 rounded-lg border border-transparent hover:border-red-500/10 transition-all duration-200 cursor-pointer"
-                title="Sign Out"
+                title={t('logout')}
               >
                 <LogOut size={16} />
               </button>
@@ -100,7 +116,7 @@ export default function Header() {
                 onClick={() => navigate('/chat')}
                 className="gap-1 px-4 py-1.5"
               >
-                Workspace <ChevronRight size={14} />
+                {language === 'en' ? 'Workspace' : 'कार्यस्थान'} <ChevronRight size={14} />
               </Button>
             </div>
           ) : (
@@ -109,7 +125,7 @@ export default function Header() {
                 onClick={() => navigate('/login')}
                 className="text-sm font-medium text-slate-350 hover:text-white transition-colors cursor-pointer"
               >
-                Sign In
+                {t('login')}
               </button>
               <Button 
                 variant="primary" 
@@ -117,7 +133,7 @@ export default function Header() {
                 onClick={() => navigate('/chat')}
                 className="gap-1 px-4 py-1.5"
               >
-                Launch App <ChevronRight size={14} />
+                {language === 'en' ? 'Launch App' : 'ऐप खोलें'} <ChevronRight size={14} />
               </Button>
             </>
           )}

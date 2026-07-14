@@ -17,11 +17,13 @@ import Sidebar from '../components/Sidebar';
 import ChatBubble from '../components/ChatBubble';
 import Button from '../components/Button';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ChatView() {
   const location = useLocation();
   const navigate = useNavigate();
   const { authFetch } = useAuth();
+  const { language, t } = useLanguage();
   
   // State
   const [history, setHistory] = useState([]);
@@ -369,10 +371,10 @@ export default function ChatView() {
             <button 
               onClick={() => navigate('/')}
               className="p-2 text-slate-400 hover:text-white bg-slate-900 rounded-lg cursor-pointer flex items-center gap-1.5 text-xs font-medium"
-              title="Return to Landing"
+              title={language === 'en' ? "Return to Landing" : "मुख्य पृष्ठ पर वापस जाएं"}
             >
               <ArrowLeft size={14} />
-              <span className="hidden sm:inline">Landing</span>
+              <span className="hidden sm:inline">{language === 'en' ? 'Landing' : 'मुख्य'}</span>
             </button>
 
             {/* Session Title */}
@@ -399,52 +401,52 @@ export default function ChatView() {
                 <Scale size={42} />
               </div>
               <h1 className="font-display font-bold text-2xl sm:text-3xl text-white mb-3">
-                LawAI Research Panel
+                {t('chatWelcomeTitle')}
               </h1>
               <p className="text-slate-450 text-sm max-w-md mx-auto mb-10 leading-relaxed">
-                Consult on legal questions or analyze contract files. Start typing below or choose one of our quick templates to begin.
+                {t('chatWelcomeDesc')}
               </p>
 
               {/* Template suggesters */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
                 <button 
-                  onClick={() => handleQuickAction("Explain standard NDA termination rules.")}
+                  onClick={() => handleQuickAction(t('chatWelcomeTemplateContractText'))}
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-accent-blue mb-1">
-                    <Sparkles size={12} /> Contract Clause
+                    <Scale size={12} /> {t('chatWelcomeTemplateContract')}
                   </div>
-                  <p className="text-slate-300 text-sm group-hover:text-white">Explain standard NDA termination rules.</p>
+                  <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplateContractText')}</p>
                 </button>
 
                 <button 
-                  onClick={() => handleQuickAction("What steps are needed to file a trademark?")}
+                  onClick={() => handleQuickAction(t('chatWelcomeTemplateIPText'))}
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-accent-emerald mb-1">
-                    <Sparkles size={12} /> IP Filing
+                    <Sparkles size={12} /> {t('chatWelcomeTemplateIP')}
                   </div>
-                  <p className="text-slate-300 text-sm group-hover:text-white">What steps are needed to file a trademark?</p>
+                  <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplateIPText')}</p>
                 </button>
 
                 <button 
-                  onClick={() => handleQuickAction("Summary of commercial lease liability defaults.")}
+                  onClick={() => handleQuickAction(t('chatWelcomeTemplatePropertyText'))}
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-accent-blue mb-1">
-                    <Sparkles size={12} /> Property Law
+                    <Scale size={12} /> {t('chatWelcomeTemplateProperty')}
                   </div>
-                  <p className="text-slate-300 text-sm group-hover:text-white">Summary of commercial lease liability defaults.</p>
+                  <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplatePropertyText')}</p>
                 </button>
 
                 <button 
-                  onClick={() => handleQuickAction("Explain key exceptions to freedom of speech.")}
+                  onClick={() => handleQuickAction(t('chatWelcomeTemplateConstText'))}
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-1">
-                    <Sparkles size={12} /> Constitutional Law
+                    <Sparkles size={12} /> {t('chatWelcomeTemplateConst')}
                   </div>
-                  <p className="text-slate-300 text-sm group-hover:text-white">Explain key exceptions to freedom of speech.</p>
+                  <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplateConstText')}</p>
                 </button>
               </div>
             </div>
@@ -479,7 +481,7 @@ export default function ChatView() {
                 <button 
                   onClick={handleRemoveFile}
                   className="p-1 text-slate-500 hover:text-red-400 rounded cursor-pointer"
-                  title="Remove file"
+                  title={language === 'en' ? "Remove file" : "फ़ाइल हटाएं"}
                 >
                   <Trash2 size={14} />
                 </button>
@@ -509,7 +511,7 @@ export default function ChatView() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors cursor-pointer"
-                title="Attach Document (.pdf, .doc, .txt)"
+                title={language === 'en' ? "Attach Document (.pdf, .doc, .txt)" : "दस्तावेज़ जोड़ें (.pdf, .doc, .txt)"}
                 disabled={isUploading || isAiTyping || isListening}
               >
                 <Paperclip size={18} />
@@ -517,7 +519,7 @@ export default function ChatView() {
 
               <input 
                 type="text" 
-                placeholder={isListening ? "Listening... Speak your legal prompt now" : isUploading ? "Uploading file..." : isAiTyping ? "AI is processing..." : "Ask your legal question..."}
+                placeholder={isListening ? (language === 'en' ? "Listening... Speak your legal prompt now" : "सुन रहा हूँ... अपना कानूनी सवाल बोलें") : isUploading ? t('uploadProgress') : isAiTyping ? t('aiTyping') : t('inputTextPlaceholder')}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 disabled={isUploading || isAiTyping || isListening}
@@ -532,7 +534,7 @@ export default function ChatView() {
                     ? 'text-red-500 bg-red-500/10 border border-red-500/35 animate-mic-pulse' 
                     : 'text-slate-450 hover:text-slate-200 hover:bg-slate-900'
                 }`}
-                title={isListening ? "Stop listening" : "Voice input"}
+                title={isListening ? (language === 'en' ? "Stop listening" : "सुनना बंद करें") : (language === 'en' ? "Voice input" : "आवाज इनपुट")}
                 disabled={isUploading || isAiTyping}
               >
                 <Mic size={18} />
@@ -545,13 +547,13 @@ export default function ChatView() {
                 disabled={(!inputText.trim() && !selectedFile) || isUploading || isAiTyping || isListening}
                 className="h-10 px-4 gap-1 flex-shrink-0"
               >
-                <span>Send</span>
+                <span>{t('sendButton')}</span>
                 <Send size={13} />
               </Button>
             </form>
             
             <p className="text-[10px] text-slate-650 text-center mt-2.5">
-              LawAI provides instant analysis but does not constitute official legal advice. Verify important details.
+              {language === 'en' ? "LawAI provides instant analysis but does not constitute official legal advice. Verify important details." : "लॉएआई त्वरित विश्लेषण प्रदान करता है लेकिन आधिकारिक कानूनी सलाह का गठन नहीं करता है। महत्वपूर्ण विवरणों को सत्यापित करें।"}
             </p>
           </div>
         </div>

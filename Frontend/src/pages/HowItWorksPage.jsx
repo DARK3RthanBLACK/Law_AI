@@ -7,9 +7,11 @@ import {
 } from 'lucide-react';
 import Header from '../components/Header';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function HowItWorksPage() {
-  const steps = [
+  const { language } = useLanguage();
+  const steps = language === 'en' ? [
     {
       step: "01",
       title: "Ask or Ingest",
@@ -31,6 +33,28 @@ export default function HowItWorksPage() {
       icon: CheckCircle2,
       color: "from-indigo-500 to-accent-emerald shadow-accent-emerald/15"
     }
+  ] : [
+    {
+      step: "01",
+      title: "पूछें या अपलोड करें",
+      desc: "एक कानूनी प्रश्न टाइप करें या सीधे हमारे कार्यस्थान पोर्टल में दस्तावेज़ (PDF, DOCX, TXT) डालें।",
+      icon: Upload,
+      color: "from-accent-blue to-blue-500 shadow-accent-blue/15"
+    },
+    {
+      step: "02",
+      title: "गहन एआई ऑडिट",
+      desc: "लॉएआई खंडों को पार्स करता है, संरचनात्मक देनदारियों को चिह्नित करता है, क्षेत्राधिकारों को संदर्भित करता है, और जोखिमों का विवरण देता है।",
+      icon: Cpu,
+      color: "from-blue-500 to-indigo-500 shadow-blue-500/15"
+    },
+    {
+      step: "03",
+      title: "कार्रवाई योग्य निर्णय",
+      desc: "प्रारूपित ऑडिट समीक्षाएं डाउनलोड करें, स्पष्ट पाठ में सारांश पढ़ें, और उद्धृत कानून अनुभाग देखें।",
+      icon: CheckCircle2,
+      color: "from-indigo-500 to-accent-emerald shadow-accent-emerald/15"
+    }
   ];
 
   return (
@@ -46,13 +70,15 @@ export default function HowItWorksPage() {
             <div className="max-w-2xl mx-auto mb-20">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold rounded-full mb-4">
                 <Sparkles size={12} />
-                <span>Auditing Pipeline</span>
+                <span>{language === 'en' ? 'Auditing Pipeline' : 'ऑडिटिंग पाइपलाइन'}</span>
               </div>
               <h1 className="font-display font-bold text-4xl sm:text-5xl text-white mb-4">
-                How LawAI Works
+                {language === 'en' ? 'How LawAI Works' : 'लॉएआई कैसे काम करता है'}
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Follow our secure ingestion and neural processing sequence to unlock verified compliance audits.
+                {language === 'en'
+                  ? 'Follow our secure ingestion and neural processing sequence to unlock verified compliance audits.'
+                  : 'सत्यापित अनुपालन ऑडिट अनलॉक करने के लिए हमारे सुरक्षित अंतर्ग्रहण और तंत्रिका प्रसंस्करण अनुक्रम का पालन करें।'}
               </p>
             </div>
           </ScrollReveal>

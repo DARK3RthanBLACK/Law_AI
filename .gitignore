@@ -3,9 +3,6 @@ node_modules/
 Frontend/node_modules/
 Backend/node_modules/
 
-# Local env files
-.env
-Backend/.env
 
 # Build outputs
 Frontend/dist/

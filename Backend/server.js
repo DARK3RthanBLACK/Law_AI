@@ -6,11 +6,12 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import apiRouter from './src/routes/api.js';
-
-dotenv.config();
+import authRouter from './src/routes/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -40,6 +41,7 @@ app.use(cors());
 app.use(express.json());
 
 // Route wiring
+app.use('/api/auth', authRouter);
 app.use('/api', apiRouter);
 
 // Base health route
@@ -71,3 +73,5 @@ app.get('*', (req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Trigger reload for PostgreSQL configuration

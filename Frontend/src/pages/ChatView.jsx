@@ -209,6 +209,7 @@ export default function ChatView() {
 
         const uploadRes = await authFetch('/api/upload', {
           method: 'POST',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
           body: formData
         });
 
@@ -253,7 +254,10 @@ export default function ChatView() {
     try {
       const res = await authFetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           prompt: promptText || `Review uploaded document ${uploadedFileMeta.name}`,
           chatId: currentChatId

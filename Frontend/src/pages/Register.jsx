@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Scale, User, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
+import AnimatedScaleBackground from '../components/AnimatedScaleBackground';
 
 export default function Register() {
   const { register } = useAuth();
@@ -72,15 +73,13 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-black text-slate-100 flex flex-col md:flex-row relative overflow-hidden">
-      {/* LEFT PANEL - Lady of Justice Premium Splitscreen Panel */}
-      <div 
-        className="hidden md:flex md:w-5/12 bg-cover bg-center relative border-r border-slate-900 flex-col justify-between p-10 z-10"
-        style={{
-          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.85)), url('/lady_of_justice.png')",
-        }}
-      >
+      {/* LEFT PANEL - Premium Splitscreen Panel with Gold Scale */}
+      <div className="hidden md:flex md:w-5/12 bg-slate-950 relative border-r border-slate-900 flex-col justify-between p-10 z-10 overflow-hidden">
+        {/* Animated Golden Scale Background */}
+        <AnimatedScaleBackground opacity={0.6} />
+
         {/* Brand Logo */}
-        <Link to="/" className="inline-flex items-center gap-2.5 group">
+        <Link to="/" className="inline-flex items-center gap-2.5 group relative z-20">
           <div className="p-2.5 bg-accent-blue/10 rounded-xl border border-accent-blue/20 text-accent-blue group-hover:scale-105 transition-transform duration-250">
             <Scale size={24} />
           </div>
@@ -90,7 +89,7 @@ export default function Register() {
         </Link>
 
         {/* Bottom Legal Quote & Brand Tag */}
-        <div className="space-y-5">
+        <div className="space-y-5 relative z-20">
           <p className="text-xl font-display font-medium text-slate-200 leading-relaxed italic">
             "Justice is sweet and musical; but law is rough and harsh."
           </p>
@@ -166,7 +165,10 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                    <User size={18} />
+                    <Scale size={18} className="hidden" />
+                    <span className="absolute left-3 top-3.5 text-slate-500">
+                      <User size={18} />
+                    </span>
                   </div>
                   <input
                     id="name"
@@ -281,7 +283,7 @@ export default function Register() {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
                       Creating account...
-                  </>
+                    </>
                   ) : (
                     'Create Account'
                   )}

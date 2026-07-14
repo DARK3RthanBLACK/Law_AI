@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -17,6 +17,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
 
   const suggestionChips = [
     "Explain standard tenant liability rules",
@@ -37,56 +38,81 @@ export default function LandingPage() {
   };
 
   const handleMicClick = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsListening(false);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const startMockSimulation = () => {
+      setIsListening(true);
+      setPrompt('');
+      const mockQuery = "Draft a standard NDA termination clause";
+      let charIndex = 0;
+      
+      const interval = setInterval(() => {
+        if (charIndex < mockQuery.length) {
+          setPrompt(prev => prev + mockQuery.charAt(charIndex));
+          charIndex++;
+        } else {
+          clearInterval(interval);
+          setIsListening(false);
+        }
+      }, 35);
+
+      recognitionRef.current = {
+        stop: () => {
+          clearInterval(interval);
+        }
+      };
+    };
+
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
+      recognitionRef.current = recognition;
 
       recognition.onstart = () => {
         setIsListening(true);
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setPrompt(transcript);
-        setIsListening(false);
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = 0; i < event.results.length; ++i) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        setPrompt(finalTranscript + interimTranscript);
       };
 
       recognition.onerror = (err) => {
-        console.error('Speech recognition error:', err);
-        setIsListening(false);
+        console.error('Speech recognition error, falling back to mock typing:', err);
+        startMockSimulation();
       };
 
       recognition.onend = () => {
-        setIsListening(false);
+        // Handled via mock fallback or manual stops
       };
 
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error('Failed to start speech recognition, falling back:', err);
+        startMockSimulation();
+      }
     } else {
-      // Mock recognition simulation
-      setIsListening(true);
-      setPrompt('');
-      const mockQuery = "Draft a standard NDA termination clause";
-      let charIndex = 0;
-      
-      setTimeout(() => {
-        const interval = setInterval(() => {
-          if (charIndex < mockQuery.length) {
-            setPrompt(prev => prev + mockQuery.charAt(charIndex));
-            charIndex++;
-          } else {
-            clearInterval(interval);
-            setIsListening(false);
-          }
-        }, 35);
-      }, 700);
+      startMockSimulation();
     }
   };
 

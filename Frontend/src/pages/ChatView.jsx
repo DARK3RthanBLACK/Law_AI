@@ -41,6 +41,7 @@ export default function ChatView() {
   // Refs
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const recognitionRef = useRef(null);
   
   // Fetch history on mount
   useEffect(() => {
@@ -139,56 +140,81 @@ export default function ChatView() {
   };
 
   const handleMicClick = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsListening(false);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const startMockSimulation = () => {
+      setIsListening(true);
+      setInputText('');
+      const mockQuery = "Explain standard tenant liability rules.";
+      let charIndex = 0;
+      
+      const interval = setInterval(() => {
+        if (charIndex < mockQuery.length) {
+          setInputText(prev => prev + mockQuery.charAt(charIndex));
+          charIndex++;
+        } else {
+          clearInterval(interval);
+          setIsListening(false);
+        }
+      }, 35);
+
+      recognitionRef.current = {
+        stop: () => {
+          clearInterval(interval);
+        }
+      };
+    };
+
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
+      recognitionRef.current = recognition;
 
       recognition.onstart = () => {
         setIsListening(true);
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInputText(transcript);
-        setIsListening(false);
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = 0; i < event.results.length; ++i) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        setInputText(finalTranscript + interimTranscript);
       };
 
       recognition.onerror = (err) => {
-        console.error('Speech recognition error:', err);
-        setIsListening(false);
+        console.error('Speech recognition error, falling back to mock typing:', err);
+        startMockSimulation();
       };
 
       recognition.onend = () => {
-        setIsListening(false);
+        // Handled via mock fallback or manual stops
       };
 
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error('Failed to start speech recognition, falling back:', err);
+        startMockSimulation();
+      }
     } else {
-      // Mock recognition simulation
-      setIsListening(true);
-      setInputText('');
-      const mockQuery = "Explain standard tenant liability rules.";
-      let charIndex = 0;
-      
-      setTimeout(() => {
-        const interval = setInterval(() => {
-          if (charIndex < mockQuery.length) {
-            setInputText(prev => prev + mockQuery.charAt(charIndex));
-            charIndex++;
-          } else {
-            clearInterval(interval);
-            setIsListening(false);
-          }
-        }, 35);
-      }, 700);
+      startMockSimulation();
     }
   };
 

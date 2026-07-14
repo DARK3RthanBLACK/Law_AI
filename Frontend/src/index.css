@@ -112,3 +112,34 @@
 .animate-mic-pulse {
   animation: micPulse 1.8s infinite ease-in-out;
 }
+
+/* Chat bubble entry animations */
+@keyframes chatBubbleAppearLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+.animate-chat-bubble-left {
+  animation: chatBubbleAppearLeft 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes chatBubbleAppearRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px) translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+.animate-chat-bubble-right {
+  animation: chatBubbleAppearRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

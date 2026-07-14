@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -29,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   // Login handler
   const login = async (email, password) => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   // Registration handler
   const register = async (name, email, password) => {
     try {
-      const response = await fetch('/api/register', {
+      const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +119,8 @@ export const AuthProvider = ({ children }) => {
       headers,
     };
 
-    const response = await fetch(url, mergedOptions);
+    const targetUrl = url.startsWith('/') ? `${API_BASE_URL}${url}` : url;
+    const response = await fetch(targetUrl, mergedOptions);
     
     // Auto-logout if token is expired/invalid (401)
     if (response.status === 401) {

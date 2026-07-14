@@ -178,12 +178,7 @@ export default function LandingPage() {
         {/* Background glow effects */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-accent-blue/5 rounded-full blur-[140px] animate-pulse-glow pointer-events-none z-0" />
 
-        {/* Dynamic 4-Point Sparkle Star decoration */}
-        <div className="absolute bottom-16 right-20 pointer-events-none hidden md:block select-none z-20">
-          <svg viewBox="0 0 100 100" fill="currentColor" className="w-16 h-16 text-[#dfc27d]/20 animate-pulse-glow">
-            <path d="M50 0C50 27.6142 27.6142 50 0 50C27.6142 50 50 72.3858 50 100C50 72.3858 72.3858 50 100 50C72.3858 50 50 27.6142 50 0Z" />
-          </svg>
-        </div>
+
 
         <div className="max-w-6xl mx-auto px-6 text-center relative z-25 w-full">
           {/* Heading */}

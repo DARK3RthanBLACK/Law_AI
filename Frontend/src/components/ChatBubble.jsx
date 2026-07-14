@@ -5,7 +5,7 @@ export default function ChatBubble({ message, isTyping = false }) {
   const isAi = message?.sender === 'ai';
 
   return (
-    <div className={`flex w-full gap-3 ${isAi ? 'justify-start' : 'justify-end'} mb-4`}>
+    <div className={`flex w-full gap-3 ${isAi ? 'justify-start animate-chat-bubble-left' : 'justify-end animate-chat-bubble-right'} mb-4`}>
       {/* AI Profile Avatar */}
       {isAi && (
         <div className="w-8 h-8 rounded-lg bg-accent-blue/10 border border-accent-blue/20 text-accent-blue flex items-center justify-center flex-shrink-0 self-end">

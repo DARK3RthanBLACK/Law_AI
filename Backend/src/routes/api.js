@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import User from '../models/User.js';
 import Chat from '../models/Chat.js';
 import authMiddleware from '../middleware/auth.js';
@@ -140,94 +141,136 @@ router.delete('/history/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// POST /api/chat - Handle chat prompt (mock response with delay) (Protected)
+// POST /api/chat - Proxy prompt to the Gemma model FastAPI server (Protected)
 router.post('/chat', authMiddleware, async (req, res) => {
-  const { prompt, chatId } = req.body;
+  const { prompt, chatId, conversationHistory } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required.' });
   }
 
-  // Simulate network/model inference latency
-  setTimeout(async () => {
+  const modelApiUrl = process.env.MODEL_API_URL;
+
+  // ── 1. Call the Gemma FastAPI model server ──────────────────────────────────
+  let reply;
+  let modelMeta = {}; // extra fields from the model (needs_more_info, clarifying_questions, etc.)
+
+  if (!modelApiUrl) {
+    console.warn('MODEL_API_URL is not set. Returning fallback response.');
+    reply = 'The AI model server is not configured. Please set MODEL_API_URL in the backend .env file and ensure the Kaggle notebook is running.';
+  } else {
     try {
-      // Basic rule-based responses based on prompt keywords to feel alive
-      let reply = `I have received your prompt: "${prompt}". This is a mock AI response simulating a backend assistant. Once integrated, this request will be forwarded to your FastAPI model server for real-time natural language generation.`;
+      // Build the history array expected by run_interactively.
+      // conversationHistory is optional; we always append the current prompt.
+      const history = Array.isArray(conversationHistory) ? conversationHistory : [];
 
-      const normalizedPrompt = prompt.toLowerCase();
-      if (normalizedPrompt.includes('contract') || normalizedPrompt.includes('agreement') || normalizedPrompt.includes('lease')) {
-        reply = `Regarding your inquiry about contracts: Under standard legal frameworks, contracts require mutual assent, offer, acceptance, and consideration. For precise contract review, our system will utilize NLP models to parse liability, termination, and indemnity clauses.`;
-      } else if (normalizedPrompt.includes('patent') || normalizedPrompt.includes('ip') || normalizedPrompt.includes('trademark') || normalizedPrompt.includes('copyright')) {
-        reply = `Intellectual property law covers patents, trademarks, copyrights, and trade secrets. This mock assistant notes that your question concerns IP protection. When connected to the production AI engine, it will analyze your concept against current IP databases.`;
-      } else if (normalizedPrompt.includes('hello') || normalizedPrompt.includes('hi') || normalizedPrompt.includes('hey')) {
-        reply = `Hello! I am your AI Assistant. How can I help you today? You can ask me legal questions, document review tasks, or request text summaries.`;
-      }
+      const modelResponse = await axios.post(
+        `${modelApiUrl}/agent`,
+        { prompt, history },
+        { timeout: 120000 } // 2-minute timeout — model inference can be slow
+      );
 
-      const userMessage = { sender: 'user', text: prompt, timestamp: new Date() };
-      const aiMessage = { sender: 'ai', text: reply, timestamp: new Date() };
-      
-      let targetChat;
+      const data = modelResponse.data;
 
-      if (chatId) {
-        // Appending to an existing chat session
-        targetChat = await Chat.findOne({ _id: chatId, userId: req.user.id });
-        if (targetChat) {
-          targetChat.messages.push(userMessage);
-          targetChat.messages.push(aiMessage);
-          targetChat.preview = reply.substring(0, 60) + (reply.length > 60 ? '...' : '');
-          await targetChat.save();
-        } else {
-          // If chatId was provided but not found, fallback to creating a new one
-          targetChat = new Chat({
-            userId: req.user.id,
-            title: prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
-            preview: reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
-            messages: [userMessage, aiMessage]
-          });
-          await targetChat.save();
-        }
+      // The notebook returns { draft, needs_more_info, clarifying_questions, eval_result }
+      if (data.needs_more_info) {
+        // The interviewer stage needs more information — surface clarifying questions
+        reply = data.clarifying_questions && data.clarifying_questions.length > 0
+          ? data.clarifying_questions.join('\n')
+          : 'I need a bit more information to assist you. Could you please provide more details about your situation?';
+        modelMeta = {
+          needs_more_info: true,
+          clarifying_questions: data.clarifying_questions || []
+        };
       } else {
-        // Creating a new chat session
+        // Successful answer — use the formatted case card (draft)
+        reply = data.draft || data.response || 'The model returned an empty response.';
+        modelMeta = {
+          needs_more_info: false,
+          eval_result: data.eval_result || {}
+        };
+      }
+    } catch (err) {
+      if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ECONNABORTED') {
+        console.error('Model server unreachable:', err.message);
+        reply = 'The AI model server is currently unreachable. Please ensure the Kaggle notebook is running and the ngrok tunnel is active, then update MODEL_API_URL in the backend .env file.';
+      } else if (err.response) {
+        console.error('Model server returned an error:', err.response.status, err.response.data);
+        reply = `The AI model server returned an error (HTTP ${err.response.status}). Please check the notebook logs.`;
+      } else {
+        console.error('Unexpected error calling model server:', err.message);
+        reply = 'An unexpected error occurred while contacting the AI model. Please try again.';
+      }
+    }
+  }
+
+  // ── 2. Persist the exchange to MongoDB ─────────────────────────────────────
+  try {
+    const userMessage = { sender: 'user', text: prompt, timestamp: new Date() };
+    const aiMessage   = { sender: 'ai',   text: reply,  timestamp: new Date() };
+
+    let targetChat;
+
+    if (chatId) {
+      // Appending to an existing chat session
+      targetChat = await Chat.findOne({ _id: chatId, userId: req.user.id });
+      if (targetChat) {
+        targetChat.messages.push(userMessage);
+        targetChat.messages.push(aiMessage);
+        targetChat.preview = reply.substring(0, 60) + (reply.length > 60 ? '...' : '');
+        await targetChat.save();
+      } else {
+        // chatId provided but not found — create a fresh session
         targetChat = new Chat({
-          userId: req.user.id,
-          title: prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
-          preview: reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
+          userId:   req.user.id,
+          title:    prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
+          preview:  reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
           messages: [userMessage, aiMessage]
         });
         await targetChat.save();
       }
-
-      res.json({
-        sender: 'ai',
-        text: reply,
-        timestamp: aiMessage.timestamp.toISOString(),
-        chatId: targetChat._id
+    } else {
+      // Creating a brand-new chat session
+      targetChat = new Chat({
+        userId:   req.user.id,
+        title:    prompt.length > 25 ? prompt.substring(0, 25) + '...' : prompt,
+        preview:  reply.substring(0, 60) + (reply.length > 60 ? '...' : ''),
+        messages: [userMessage, aiMessage]
       });
-    } catch (err) {
-      console.error('Error saving chat message to database:', err);
-      // Fallback response if DB save fails
-      res.status(500).json({ error: 'Server error processing chat request.' });
+      await targetChat.save();
     }
-  }, 1500); // 1.5 seconds mock delay
+
+    res.json({
+      sender:    'ai',
+      text:      reply,
+      timestamp: aiMessage.timestamp.toISOString(),
+      chatId:    targetChat._id,
+      ...modelMeta  // passes needs_more_info, clarifying_questions, eval_result to frontend
+    });
+  } catch (dbErr) {
+    console.error('Error saving chat message to database:', dbErr);
+    res.status(500).json({ error: 'Server error persisting chat message.' });
+  }
 });
 
-// POST /api/upload - Handle file upload (mock endpoint) (Protected)
+// POST /api/upload - Handle file upload (Protected)
+// NOTE: Full PDF ingestion via the model server is deferred.
+// The endpoint currently accepts the file metadata and returns a confirmation.
+// To enable real PDF processing, forward the file to MODEL_API_URL/upload
+// and integrate it with the notebook's load_chunks / ChromaDB pipeline.
 router.post('/upload', authMiddleware, (req, res) => {
   const simulatedFile = {
-    filename: 'mock_document_legal.pdf',
-    size: 245310, // ~240 KB
+    filename: 'document.pdf',
+    size: 0,
     mimetype: 'application/pdf',
     uploadedAt: new Date().toISOString()
   };
 
-  // Simulate file parsing delay
-  setTimeout(() => {
-    res.json({
-      success: true,
-      message: 'File uploaded and pre-processed successfully.',
-      file: simulatedFile
-    });
-  }, 1000);
+  res.json({
+    success: true,
+    message: 'File received. Full document analysis via the AI model is coming soon.',
+    file: simulatedFile
+  });
 });
 
 export default router;

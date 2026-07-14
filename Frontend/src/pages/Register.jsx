@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Scale, User, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
-import AnimatedScaleBackground from '../components/AnimatedScaleBackground';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const { language, t } = useLanguage();
 
   // Form state
   const [name, setName] = useState('');
@@ -117,7 +118,7 @@ export default function Register() {
           className="absolute top-6 right-6 inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-2 px-3.5 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 rounded-xl cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Back to Home</span>
+          <span>{language === 'en' ? 'Back to Home' : 'मुख्य पृष्ठ पर वापस'}</span>
         </Link>
 
         {/* Mobile Header (Only visible when Left Panel is hidden) */}
@@ -131,10 +132,10 @@ export default function Register() {
             </span>
           </Link>
           <h2 className="text-2xl font-display font-semibold text-white tracking-tight">
-            Create your account
+            {language === 'en' ? 'Create your account' : 'अपना खाता बनाएं'}
           </h2>
           <p className="text-sm text-slate-400 mt-1">
-            Get started with our AI-powered legal analysis suite
+            {language === 'en' ? 'Get started with our AI-powered legal analysis suite' : 'हमारे एआई-संचालित कानूनी विश्लेषण सूट के साथ शुरुआत करें'}
           </p>
         </div>
 
@@ -142,10 +143,10 @@ export default function Register() {
           {/* Desktop Form Header (Hidden on Mobile) */}
           <div className="hidden md:block mb-8">
             <h2 className="text-3xl font-display font-semibold text-white tracking-tight">
-              Get started for free
+              {language === 'en' ? 'Get started for free' : 'मुफ़्त में शुरू करें'}
             </h2>
             <p className="mt-2 text-sm text-slate-455">
-              Create an account to gain private document storage and unlimited queries.
+              {language === 'en' ? 'Create an account to gain private document storage and unlimited queries.' : 'निजी दस्तावेज़ भंडारण और असीमित प्रश्न प्राप्त करने के लिए एक खाता बनाएं।'}
             </p>
           </div>
 
@@ -161,7 +162,7 @@ export default function Register() {
               {/* Full Name Field */}
               <div>
                 <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-slate-450 mb-2">
-                  Full Name
+                  {t('nameLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
@@ -189,7 +190,7 @@ export default function Register() {
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-450 mb-2">
-                  Email Address
+                  {t('emailLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
@@ -214,7 +215,7 @@ export default function Register() {
               {/* Password Field */}
               <div>
                 <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-450 mb-2">
-                  Password
+                  {t('passwordLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
@@ -246,7 +247,7 @@ export default function Register() {
               {/* Confirm Password Field */}
               <div>
                 <label htmlFor="confirmPassword" className="block text-xs font-semibold uppercase tracking-wider text-slate-450 mb-2">
-                  Confirm Password
+                  {language === 'en' ? 'Confirm Password' : 'पासवर्ड की पुष्टि करें'}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
@@ -260,7 +261,7 @@ export default function Register() {
                     className={`block w-full pl-10 pr-3 py-2.5 bg-slate-950/65 border rounded-xl text-slate-100 placeholder-slate-550 text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue/30 focus:border-accent-blue transition-all duration-200 ${
                       validationErrors.confirmPassword ? 'border-red-500/50' : 'border-slate-800'
                     }`}
-                    placeholder="Repeat your password"
+                    placeholder={language === 'en' ? "Repeat your password" : "अपना पासवर्ड दोहराएं"}
                   />
                 </div>
                 {validationErrors.confirmPassword && (
@@ -282,10 +283,10 @@ export default function Register() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Creating account...
+                      <span>{language === 'en' ? 'Creating account...' : 'खाता बनाया जा रहा है...'}</span>
                     </>
                   ) : (
-                    'Create Account'
+                    language === 'en' ? 'Create Account' : 'खाता बनाएं'
                   )}
                 </Button>
               </div>
@@ -294,9 +295,9 @@ export default function Register() {
             {/* Bottom Link */}
             <div className="mt-6 pt-6 border-t border-slate-900 text-center">
               <p className="text-sm text-slate-400">
-                Already have an account?{' '}
+                {t('hasAccount')}{' '}
                 <Link to="/login" className="font-semibold text-accent-blue hover:text-accent-blue-hover transition-colors">
-                  Sign In
+                  {t('signIn')}
                 </Link>
               </p>
             </div>

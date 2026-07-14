@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, MessageSquare, Settings, LogOut, X, Scale, User, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Sidebar({ 
   history = [], 
@@ -14,6 +15,7 @@ export default function Sidebar({
 }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { language, t } = useLanguage();
 
   return (
     <>
@@ -63,18 +65,18 @@ export default function Sidebar({
             className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-750 border border-slate-700/60 text-slate-200 hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-[0.98] cursor-pointer"
           >
             <Plus size={16} />
-            <span>New Session</span>
+            <span>{t('newChat')}</span>
           </button>
         </div>
 
         {/* Chat History List */}
         <div className="flex-1 overflow-y-auto px-3 space-y-1 py-2">
           <div className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-            Recent Analysis
+            {language === 'en' ? 'Recent Analysis' : 'हालिया विश्लेषण'}
           </div>
           {history.length === 0 ? (
             <div className="text-center py-8 text-xs text-slate-500 italic">
-              No recent sessions
+              {language === 'en' ? 'No recent sessions' : 'कोई हालिया सत्र नहीं'}
             </div>
           ) : (
             history.map((chat) => {
@@ -112,7 +114,7 @@ export default function Sidebar({
                       }
                     }}
                     className="absolute right-2 opacity-0 group-hover/item:opacity-100 p-1.5 text-slate-500 hover:text-red-400 hover:bg-slate-800 rounded-md transition-all duration-150 cursor-pointer z-10"
-                    title="Delete Session"
+                    title={language === 'en' ? "Delete Session" : "सत्र हटाएं"}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -143,14 +145,14 @@ export default function Sidebar({
           <div className="mt-3 grid grid-cols-2 gap-1 border-t border-slate-800/40 pt-2 text-xs">
             <button className="flex items-center gap-1.5 py-1.5 px-2 text-slate-450 hover:text-slate-200 transition-colors rounded hover:bg-slate-800 cursor-pointer justify-center">
               <Settings size={14} />
-              <span>Settings</span>
+              <span>{language === 'en' ? 'Settings' : 'सेटअप'}</span>
             </button>
             <button 
               onClick={logout} 
               className="flex items-center gap-1.5 py-1.5 px-2 text-slate-450 hover:text-red-400 transition-colors rounded hover:bg-slate-800 cursor-pointer justify-center"
             >
               <LogOut size={14} />
-              <span>Sign Out</span>
+              <span>{t('logout')}</span>
             </button>
           </div>
         </div>

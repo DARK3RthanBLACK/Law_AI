@@ -3,12 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Scale, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
-import AnimatedScaleBackground from '../components/AnimatedScaleBackground';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, t } = useLanguage();
 
   // Form state
   const [email, setEmail] = useState('');
@@ -107,7 +108,7 @@ export default function Login() {
           className="absolute top-6 right-6 inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-2 px-3.5 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 rounded-xl cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Back to Home</span>
+          <span>{language === 'en' ? 'Back to Home' : 'मुख्य पृष्ठ पर वापस'}</span>
         </Link>
 
         {/* Mobile Header (Only visible when Left Panel is hidden) */}
@@ -121,10 +122,10 @@ export default function Login() {
             </span>
           </Link>
           <h2 className="text-2xl font-display font-semibold text-white tracking-tight">
-            Welcome back
+            {t('loginTitle')}
           </h2>
           <p className="text-sm text-slate-400 mt-1">
-            Sign in to access your Legal AI Workspace
+            {t('loginSubtitle')}
           </p>
         </div>
 
@@ -132,10 +133,10 @@ export default function Login() {
           {/* Desktop Form Header (Hidden on Mobile) */}
           <div className="hidden md:block mb-8">
             <h2 className="text-3xl font-display font-semibold text-white tracking-tight">
-              Sign in to your account
+              {language === 'en' ? 'Sign in to your account' : 'अपने खाते में साइन इन करें'}
             </h2>
             <p className="mt-2 text-sm text-slate-455">
-              Securely access your active legal documents and drafts.
+              {language === 'en' ? 'Securely access your active legal documents and drafts.' : 'अपने सक्रिय कानूनी दस्तावेजों और ड्राफ्ट को सुरक्षित रूप से एक्सेस करें।'}
             </p>
           </div>
 
@@ -151,7 +152,7 @@ export default function Login() {
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-450 mb-2">
-                  Email Address
+                  {t('emailLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
@@ -178,10 +179,10 @@ export default function Login() {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-450">
-                    Password
+                    {t('passwordLabel')}
                   </label>
                   <a href="#forgot" className="text-xs font-medium text-accent-blue hover:text-accent-blue-hover transition-colors">
-                    Forgot Password?
+                    {language === 'en' ? 'Forgot Password?' : 'पासवर्ड भूल गए?'}
                   </a>
                 </div>
                 <div className="relative">
@@ -226,10 +227,10 @@ export default function Login() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Signing in...
+                      <span>{language === 'en' ? 'Signing in...' : 'साइन इन किया जा रहा है...'}</span>
                     </>
                   ) : (
-                    'Sign In'
+                    t('signIn')
                   )}
                 </Button>
               </div>
@@ -238,9 +239,9 @@ export default function Login() {
             {/* Bottom Link */}
             <div className="mt-6 pt-6 border-t border-slate-900 text-center">
               <p className="text-sm text-slate-400">
-                Don't have an account?{' '}
+                {t('noAccount')}{' '}
                 <Link to="/register" className="font-semibold text-accent-blue hover:text-accent-blue-hover transition-colors">
-                  Create an account
+                  {language === 'en' ? 'Create an account' : 'नया खाता बनाएं'}
                 </Link>
               </p>
             </div>

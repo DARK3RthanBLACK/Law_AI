@@ -11,9 +11,11 @@ import {
 import Header from '../components/Header';
 import Card from '../components/Card';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FeaturesPage() {
-  const features = [
+  const { language } = useLanguage();
+  const features = language === 'en' ? [
     {
       title: "Interactive AI Consultation",
       icon: MessageSquare,
@@ -44,6 +46,37 @@ export default function FeaturesPage() {
       icon: BookOpen,
       desc: "Quick access to constitutional amendments, corporate laws, and tenant codes to crosscheck recommendations."
     }
+  ] : [
+    {
+      title: "इंटरैक्टिव एआई परामर्श",
+      icon: MessageSquare,
+      desc: "मुख्य कानूनी सिद्धांतों पर प्रशिक्षित एआई के साथ चैट करें, जो वास्तविक समय में संदर्भ प्रदान करता है और जटिल कानूनी शब्दावली को स्पष्ट करता है।"
+    },
+    {
+      title: "स्मार्ट दस्तावेज़ विश्लेषण",
+      icon: FileText,
+      desc: "देयता, महत्वपूर्ण तिथियों, क्षतिपूर्ति और संभावित जोखिमों को तुरंत निकालने के लिए पीडीएफ, अनुबंध या सेवा की शर्तों को अपलोड करें।"
+    },
+    {
+      title: "ऐतिहासिक मामला पुनर्प्राप्ति",
+      icon: History,
+      desc: "एक एकीकृत, सुरक्षित स्थान पर अपने सभी पिछले प्रश्नों और दस्तावेज़ समीक्षाओं को फिर से देखें और प्रबंधित करें।"
+    },
+    {
+      title: "बहुभाषी अनुकूलन क्षमता",
+      icon: Languages,
+      desc: "कानूनी सटीकता बनाए रखते हुए कई भाषाओं में दस्तावेजों का अनुवाद, सारांश और मसौदा तैयार करें।"
+    },
+    {
+      title: "सटीकता और आत्मविश्वास जांच",
+      icon: ShieldCheck,
+      desc: "कानूनी भ्रम को रोकने के लिए संदर्भों की दोबारा जांच करें, यह उजागर करते हुए कि कानून का कौन सा हिस्सा आपके प्रश्न से मेल खाता है।"
+    },
+    {
+      title: "क़ानून संदर्भ पुस्तकालय",
+      icon: BookOpen,
+      desc: "सिफारिशों की जांच करने के लिए संवैधानिक संशोधनों, कॉर्पोरेट कानूनों और किरायेदार कोडों तक त्वरित पहुंच।"
+    }
   ];
 
   return (
@@ -59,13 +92,15 @@ export default function FeaturesPage() {
             <div className="max-w-2xl mx-auto mb-16">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold rounded-full mb-4">
                 <Sparkles size={12} />
-                <span>Capabilities</span>
+                <span>{language === 'en' ? 'Capabilities' : 'क्षमताएं'}</span>
               </div>
               <h1 className="font-display font-bold text-4xl sm:text-5xl text-white mb-4">
-                Platform Features
+                {language === 'en' ? 'Platform Features' : 'प्लेटफ़ॉर्म की विशेषताएं'}
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Empowering lawyers, business owners, and individuals with state-of-the-art legal understanding tools.
+                {language === 'en' 
+                  ? 'Empowering lawyers, business owners, and individuals with state-of-the-art legal understanding tools.' 
+                  : 'अत्याधुनिक कानूनी समझ उपकरणों के साथ वकीलों, व्यापार मालिकों और व्यक्तियों को सशक्त बनाना।'}
               </p>
             </div>
           </ScrollReveal>

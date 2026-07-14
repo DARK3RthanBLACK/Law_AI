@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -12,17 +12,20 @@ import {
 import Header from '../components/Header';
 import Button from '../components/Button';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+  const { language, t } = useLanguage();
 
   const suggestionChips = [
-    "Explain standard tenant liability rules",
-    "What is the provisional patent filing process?",
-    "Review a sample NDA termination clause",
-    "Freedom of speech First Amendment exceptions"
+    t('suggestTenant'),
+    t('suggestPatent'),
+    t('suggestNDA'),
+    t('suggestSpeech')
   ];
 
   const handleSubmit = (e) => {
@@ -37,56 +40,81 @@ export default function LandingPage() {
   };
 
   const handleMicClick = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsListening(false);
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const startMockSimulation = () => {
+      setIsListening(true);
+      setPrompt('');
+      const mockQuery = "Draft a standard NDA termination clause";
+      let charIndex = 0;
+      
+      const interval = setInterval(() => {
+        if (charIndex < mockQuery.length) {
+          setPrompt(prev => prev + mockQuery.charAt(charIndex));
+          charIndex++;
+        } else {
+          clearInterval(interval);
+          setIsListening(false);
+        }
+      }, 35);
+
+      recognitionRef.current = {
+        stop: () => {
+          clearInterval(interval);
+        }
+      };
+    };
+
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
+      recognitionRef.current = recognition;
 
       recognition.onstart = () => {
         setIsListening(true);
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setPrompt(transcript);
-        setIsListening(false);
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = 0; i < event.results.length; ++i) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        setPrompt(finalTranscript + interimTranscript);
       };
 
       recognition.onerror = (err) => {
-        console.error('Speech recognition error:', err);
-        setIsListening(false);
+        console.error('Speech recognition error, falling back to mock typing:', err);
+        startMockSimulation();
       };
 
       recognition.onend = () => {
-        setIsListening(false);
+        // Handled via mock fallback or manual stops
       };
 
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error('Failed to start speech recognition, falling back:', err);
+        startMockSimulation();
+      }
     } else {
-      // Mock recognition simulation
-      setIsListening(true);
-      setPrompt('');
-      const mockQuery = "Draft a standard NDA termination clause";
-      let charIndex = 0;
-      
-      setTimeout(() => {
-        const interval = setInterval(() => {
-          if (charIndex < mockQuery.length) {
-            setPrompt(prev => prev + mockQuery.charAt(charIndex));
-            charIndex++;
-          } else {
-            clearInterval(interval);
-            setIsListening(false);
-          }
-        }, 35);
-      }, 700);
+      startMockSimulation();
     }
   };
 
@@ -110,24 +138,35 @@ export default function LandingPage() {
           <ScrollReveal direction="up" delay={100}>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold rounded-full mb-6">
               <Sparkles size={12} />
-              <span>AI-Powered Legal Research Engine</span>
+              <span>{language === 'en' ? 'AI-Powered Legal Research Engine' : 'एआई-संचालित कानूनी अनुसंधान इंजन'}</span>
             </div>
           </ScrollReveal>
 
           {/* Heading */}
           <ScrollReveal direction="up" delay={200}>
             <h1 className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight leading-tight sm:leading-none mb-6">
-              Understand Legal Queries & <br />
-              <span className="bg-gradient-to-r from-accent-blue via-blue-400 to-accent-emerald bg-clip-text text-transparent">
-                Contracts Instantly
-              </span>
+              {language === 'en' ? (
+                <>
+                  Understand Legal Queries & <br />
+                  <span className="bg-gradient-to-r from-accent-blue via-blue-400 to-accent-emerald bg-clip-text text-transparent">
+                    Contracts Instantly
+                  </span>
+                </>
+              ) : (
+                <>
+                  कानूनी प्रश्नों और अनुबंधों को <br />
+                  <span className="bg-gradient-to-r from-accent-blue via-blue-400 to-accent-emerald bg-clip-text text-transparent">
+                    तुरंत समझें
+                  </span>
+                </>
+              )}
             </h1>
           </ScrollReveal>
 
           {/* Subheading */}
           <ScrollReveal direction="up" delay={300}>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-              LawAI parses complex regulations, extracts contract liabilities, and explains rights in simple terms. Fast, private, and highly accessible.
+              {t('heroSubtitle')}
             </p>
           </ScrollReveal>
 
@@ -142,7 +181,7 @@ export default function LandingPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder={isListening ? "Listening... Speak your legal prompt now" : "Ask a legal question (e.g., 'What is a provisional patent?')..."}
+                  placeholder={isListening ? (language === 'en' ? "Listening... Speak your legal prompt now" : "सुन रहा हूँ... अपना कानूनी सवाल बोलें") : t('searchPlaceholder')}
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   disabled={isListening}
@@ -157,7 +196,7 @@ export default function LandingPage() {
                         ? 'text-red-500 bg-red-500/10 border border-red-500/35 animate-mic-pulse' 
                         : 'text-slate-450 hover:text-slate-200 hover:bg-slate-900'
                     }`}
-                    title={isListening ? "Stop listening" : "Voice search"}
+                    title={isListening ? (language === 'en' ? "Stop listening" : "सुनना बंद करें") : (language === 'en' ? "Voice search" : "आवाज खोज")}
                   >
                     <Mic size={18} />
                   </button>
@@ -165,7 +204,7 @@ export default function LandingPage() {
                     type="button"
                     onClick={() => navigate('/chat', { state: { triggerUpload: true } })}
                     className="p-2 text-slate-450 hover:text-slate-200 hover:bg-slate-900 rounded-lg transition-colors cursor-pointer"
-                    title="Upload Document"
+                    title={language === 'en' ? "Upload Document" : "दस्तावेज़ अपलोड करें"}
                     disabled={isListening}
                   >
                     <Upload size={18} />
@@ -177,7 +216,7 @@ export default function LandingPage() {
                     className="h-10 px-4 gap-1.5"
                     disabled={isListening}
                   >
-                    Analyze <ArrowRight size={14} />
+                    {language === 'en' ? 'Analyze' : 'विश्लेषण करें'} <ArrowRight size={14} />
                   </Button>
                 </div>
               </div>

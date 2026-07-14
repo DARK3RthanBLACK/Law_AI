@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import apiRouter from './src/routes/api.js';
-import authRouter from './src/routes/auth.js';
+import authRouter from './src/middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -164,12 +164,16 @@ router.post('/chat', authMiddleware, async (req, res) => {
       // conversationHistory is optional; we always append the current prompt.
       const history = Array.isArray(conversationHistory) ? conversationHistory : [];
 
+      console.log(`[API] Forwarding prompt to model server: "${prompt}"`);
+      console.time('[API] Model Response Time');
+
       const modelResponse = await axios.post(
         `${modelApiUrl}/agent`,
         { prompt, history, language },
         { timeout: 120000 } // 2-minute timeout — model inference can be slow
       );
 
+      console.timeEnd('[API] Model Response Time');
       const data = modelResponse.data;
 
       // The notebook returns { draft, needs_more_info, clarifying_questions, eval_result }

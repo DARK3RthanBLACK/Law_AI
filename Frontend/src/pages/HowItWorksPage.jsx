@@ -1,8 +1,9 @@
 import React from 'react';
 import { 
   Sparkles, 
-  Upload, 
-  Cpu, 
+  MessageSquare,
+  Search,
+  FileText,
   CheckCircle2 
 } from 'lucide-react';
 import Header from '../components/Header';
@@ -14,56 +15,70 @@ export default function HowItWorksPage() {
   const steps = language === 'en' ? [
     {
       step: "01",
-      title: "Ask or Ingest",
-      desc: "Type a legal question or drop documents (PDF, DOCX, TXT) directly into our workspace portal.",
-      icon: Upload,
+      title: "Interviewer",
+      desc: "Asks about any gaps in knowledge and clarifies your requirements.",
+      icon: MessageSquare,
       color: "from-accent-blue to-blue-500 shadow-accent-blue/15"
     },
     {
       step: "02",
-      title: "Deep AI Audit",
-      desc: "LawAI parses clauses, flags structural liabilities, cross-references jurisdictions, and details risks.",
-      icon: Cpu,
+      title: "Advisor",
+      desc: "Searches legal document databases to find relevant precedents and laws.",
+      icon: Search,
       color: "from-blue-500 to-indigo-500 shadow-blue-500/15"
     },
     {
       step: "03",
-      title: "Actionable Verdicts",
-      desc: "Download formatted audit reviews, read summaries in plain text, and see cited statute sections.",
+      title: "Drafter",
+      desc: "Creates the case cards and drafts relevant PDFs based on the gathered context.",
+      icon: FileText,
+      color: "from-indigo-500 to-purple-500 shadow-purple-500/15"
+    },
+    {
+      step: "04",
+      title: "Self Evaluator",
+      desc: "Performs a final quality check to ensure accuracy and completeness.",
       icon: CheckCircle2,
-      color: "from-indigo-500 to-accent-emerald shadow-accent-emerald/15"
+      color: "from-purple-500 to-accent-emerald shadow-accent-emerald/15"
     }
   ] : [
     {
       step: "01",
-      title: "पूछें या अपलोड करें",
-      desc: "एक कानूनी प्रश्न टाइप करें या सीधे हमारे कार्यस्थान पोर्टल में दस्तावेज़ (PDF, DOCX, TXT) डालें।",
-      icon: Upload,
+      title: "साक्षात्कारकर्ता",
+      desc: "ज्ञान में किसी भी कमी के बारे में पूछता है और आपकी आवश्यकताओं को स्पष्ट करता है।",
+      icon: MessageSquare,
       color: "from-accent-blue to-blue-500 shadow-accent-blue/15"
     },
     {
       step: "02",
-      title: "गहन एआई ऑडिट",
-      desc: "लॉएआई खंडों को पार्स करता है, संरचनात्मक देनदारियों को चिह्नित करता है, क्षेत्राधिकारों को संदर्भित करता है, और जोखिमों का विवरण देता है।",
-      icon: Cpu,
+      title: "सलाहकार",
+      desc: "प्रासंगिक मिसालें और कानून खोजने के लिए कानूनी दस्तावेज़ डेटाबेस खोजता है।",
+      icon: Search,
       color: "from-blue-500 to-indigo-500 shadow-blue-500/15"
     },
     {
       step: "03",
-      title: "कार्रवाई योग्य निर्णय",
-      desc: "प्रारूपित ऑडिट समीक्षाएं डाउनलोड करें, स्पष्ट पाठ में सारांश पढ़ें, और उद्धृत कानून अनुभाग देखें।",
+      title: "प्रारूपकार",
+      desc: "एकत्रित संदर्भ के आधार पर केस कार्ड और प्रासंगिक पीडीएफ तैयार करता है।",
+      icon: FileText,
+      color: "from-indigo-500 to-purple-500 shadow-purple-500/15"
+    },
+    {
+      step: "04",
+      title: "स्वयं मूल्यांकनकर्ता",
+      desc: "सटीकता और पूर्णता सुनिश्चित करने के लिए अंतिम गुणवत्ता जांच करता है।",
       icon: CheckCircle2,
-      color: "from-indigo-500 to-accent-emerald shadow-accent-emerald/15"
+      color: "from-purple-500 to-accent-emerald shadow-accent-emerald/15"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18 animate-fade-in">
       <Header />
 
       <section className="py-20 md:py-28 relative flex-1 flex flex-col justify-center">
         {/* Background glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-blue/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-blue/5 rounded-full blur-[140px] pointer-events-none animate-float" />
 
         <div className="max-w-5xl mx-auto px-6 relative z-10 w-full text-center">
           <ScrollReveal direction="up">
@@ -87,7 +102,7 @@ export default function HowItWorksPage() {
           <div className="relative flex flex-col md:flex-row items-stretch justify-between gap-12 md:gap-6 mt-10">
             
             {/* Desktop Connecting SVG Dashed Connector Line */}
-            <div className="hidden md:block absolute top-[44px] left-[15%] right-[15%] h-1 z-0">
+            <div className="hidden md:block absolute top-[44px] left-[10%] right-[10%] h-1 z-0">
               <svg className="w-full h-2 overflow-visible" fill="none">
                 <line 
                   x1="0" 

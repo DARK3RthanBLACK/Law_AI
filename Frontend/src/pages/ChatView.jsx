@@ -5,7 +5,7 @@ import {
   Send, 
   Paperclip, 
   Trash2, 
-  Scale, 
+  Gavel, 
   AlertCircle, 
   CheckCircle2, 
   FileText, 
@@ -340,7 +340,7 @@ export default function ChatView() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-950 overflow-hidden text-slate-100">
+    <div className="flex h-screen bg-slate-950 overflow-hidden text-slate-100 animate-fade-in">
       
       {/* Sidebar Panel */}
       <Sidebar 
@@ -398,7 +398,7 @@ export default function ChatView() {
             /* Welcome / Zero State Screen */
             <div className="max-w-2xl mx-auto text-center py-12 md:py-20 flex flex-col items-center">
               <div className="p-4 bg-accent-blue/10 text-accent-blue border border-accent-blue/20 rounded-2xl mb-6">
-                <Scale size={42} />
+                <Gavel size={42} />
               </div>
               <h1 className="font-display font-bold text-2xl sm:text-3xl text-white mb-3">
                 {t('chatWelcomeTitle')}
@@ -414,7 +414,7 @@ export default function ChatView() {
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-accent-blue mb-1">
-                    <Scale size={12} /> {t('chatWelcomeTemplateContract')}
+                    <Gavel size={12} /> {t('chatWelcomeTemplateContract')}
                   </div>
                   <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplateContractText')}</p>
                 </button>
@@ -434,7 +434,7 @@ export default function ChatView() {
                   className="glass p-4 rounded-xl border border-slate-900 hover:border-slate-800 text-left hover:bg-slate-900/50 transition-all group cursor-pointer"
                 >
                   <div className="flex items-center gap-2 text-xs font-semibold text-accent-blue mb-1">
-                    <Scale size={12} /> {t('chatWelcomeTemplateProperty')}
+                    <Gavel size={12} /> {t('chatWelcomeTemplateProperty')}
                   </div>
                   <p className="text-slate-300 text-sm group-hover:text-white">{t('chatWelcomeTemplatePropertyText')}</p>
                 </button>

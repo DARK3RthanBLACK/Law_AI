@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Scale, ChevronRight, LogOut, User, Globe } from 'lucide-react';
+import { Gavel, ChevronRight, LogOut, User, Globe } from 'lucide-react';
 import Button from './Button';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -34,7 +34,7 @@ export default function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="p-1.5 bg-[#1e293b]/60 rounded-lg border border-slate-800 text-accent-blue group-hover:scale-105 transition-transform duration-200 shadow-md">
-            <Scale size={18} />
+            <Gavel size={18} />
           </div>
           <span className="font-sans font-bold text-lg tracking-tight">
             <span className="text-white">Law</span>

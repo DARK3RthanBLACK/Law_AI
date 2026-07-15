@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Scale, User, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Gavel, User, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
@@ -74,7 +74,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-slate-100 flex flex-col md:flex-row relative overflow-hidden">
+    <div className="min-h-screen bg-black text-slate-100 flex flex-col md:flex-row relative overflow-hidden animate-fade-in">
       {/* LEFT PANEL - Premium Splitscreen Panel with Gold Scale */}
       <div className="hidden md:flex md:w-5/12 bg-slate-950 relative border-r border-slate-900 flex-col justify-between p-10 z-10 overflow-hidden">
         {/* Animated Golden Scale Background */}
@@ -83,7 +83,7 @@ export default function Register() {
         {/* Brand Logo */}
         <Link to="/" className="inline-flex items-center gap-2.5 group relative z-20">
           <div className="p-2.5 bg-accent-blue/10 rounded-xl border border-accent-blue/20 text-accent-blue group-hover:scale-105 transition-transform duration-250">
-            <Scale size={24} />
+            <Gavel size={24} />
           </div>
           <span className="font-display font-bold text-2xl tracking-tight text-white">
             Law<span className="text-accent-blue">AI</span>
@@ -126,7 +126,7 @@ export default function Register() {
         <div className="md:hidden text-center mb-8 relative z-10">
           <Link to="/" className="inline-flex items-center gap-2 group mb-4">
             <div className="p-2 bg-accent-blue/10 rounded-lg border border-accent-blue/20 text-accent-blue group-hover:scale-105 transition-transform duration-250">
-              <Scale size={20} />
+              <Gavel size={20} />
             </div>
             <span className="font-display font-bold text-xl tracking-tight text-white">
               Law<span className="text-accent-blue">AI</span>
@@ -167,7 +167,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                    <Scale size={18} className="hidden" />
+                    <Gavel size={18} className="hidden" />
                     <span className="absolute left-3 top-3.5 text-slate-500">
                       <User size={18} />
                     </span>

@@ -5,7 +5,7 @@ import {
   Upload, 
   ArrowRight, 
   Search, 
-  Scale,
+  Gavel,
   Info,
   Mic,
   ChevronLeft,
@@ -32,7 +32,7 @@ export default function LandingPage() {
     {
       title: language === 'en' ? "Standard Tenant Liability:" : "मानक किरायेदार देयता:",
       desc: language === 'en' ? "Explain common rules. what is the regliation..." : "सामान्य नियमों की व्याख्या करें। नियम क्या है...",
-      icon: Scale,
+      icon: Gavel,
       prompt: t('suggestTenant')
     },
     {
@@ -160,7 +160,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pt-18 relative overflow-hidden animate-fade-in">
       <Header />
 
       {/* Hero Section */}
@@ -176,7 +176,7 @@ export default function LandingPage() {
         />
 
         {/* Background glow effects */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-accent-blue/5 rounded-full blur-[140px] animate-pulse-glow pointer-events-none z-0" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-accent-blue/5 rounded-full blur-[140px] animate-pulse-glow animate-float pointer-events-none z-0" />
 
 
 
@@ -327,7 +327,7 @@ export default function LandingPage() {
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-1.5 bg-accent-blue/10 rounded-md text-accent-blue border border-accent-blue/20">
-                <Scale size={16} />
+                <Gavel size={16} />
               </div>
               <span className="font-sans font-bold text-lg text-white">LawAI</span>
             </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { User, Gavel, FileText } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function ChatBubble({ message, isTyping = false }) {
   const isAi = message?.sender === 'ai';
@@ -27,7 +29,11 @@ export default function ChatBubble({ message, isTyping = false }) {
           </div>
         ) : (
           <>
-            <p className="whitespace-pre-line">{message.text}</p>
+            <div className="markdown-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.text}
+              </ReactMarkdown>
+            </div>
             
             {/* Attachment preview if any */}
             {message.attachment && (

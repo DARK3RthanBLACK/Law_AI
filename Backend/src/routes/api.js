@@ -170,30 +170,31 @@ router.post('/chat', authMiddleware, async (req, res) => {
       const modelResponse = await axios.post(
         `${modelApiUrl}/agent`,
         { prompt, history, language },
-        { timeout: 120000 } // 2-minute timeout — model inference can be slow
+        { 
+          headers: { 'ngrok-skip-browser-warning': 'true' },
+          timeout: 300000 // 5-minute timeout for slow GPU threads
+        }
       );
 
       console.timeEnd('[API] Model Response Time');
       const data = modelResponse.data;
 
-      // The notebook returns { draft, needs_more_info, clarifying_questions, eval_result }
+      // The notebook returns { draft, needs_more_info, clarifying_questions, eval_result, case_facts, language }
       if (data.needs_more_info) {
-        // The interviewer stage needs more information — surface clarifying questions
         reply = data.clarifying_questions && data.clarifying_questions.length > 0
           ? data.clarifying_questions.join('\n')
           : 'I need a bit more information to assist you. Could you please provide more details about your situation?';
-        modelMeta = {
-          needs_more_info: true,
-          clarifying_questions: data.clarifying_questions || []
-        };
       } else {
-        // Successful answer — use the formatted case card (draft)
         reply = data.draft || data.response || 'The model returned an empty response.';
-        modelMeta = {
-          needs_more_info: false,
-          eval_result: data.eval_result || {}
-        };
       }
+
+      modelMeta = {
+        needs_more_info: !!data.needs_more_info,
+        clarifying_questions: data.clarifying_questions || [],
+        eval_result: data.eval_result || {},
+        case_facts: data.case_facts || {},
+        language: data.language || 'English'
+      };
     } catch (err) {
       if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ECONNABORTED') {
         console.error('Model server unreachable:', err.message);
@@ -254,6 +255,34 @@ router.post('/chat', authMiddleware, async (req, res) => {
   } catch (dbErr) {
     console.error('Error saving chat message to database:', dbErr);
     res.status(500).json({ error: 'Server error persisting chat message.' });
+  }
+});
+
+// POST /api/draft-notice - Generate formal legal demand notice from structured case facts (Protected)
+router.post('/draft-notice', authMiddleware, async (req, res) => {
+  const { case_facts, language } = req.body;
+  const modelApiUrl = process.env.MODEL_API_URL;
+
+  if (!modelApiUrl) {
+    return res.status(503).json({
+      error: 'The AI model server is not configured. Please set MODEL_API_URL in the backend .env file.'
+    });
+  }
+
+  try {
+    const modelResponse = await axios.post(
+      `${modelApiUrl}/draft-notice`,
+      { case_facts, language: language || 'English' },
+      {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+        timeout: 300000 // 5-minute timeout
+      }
+    );
+
+    res.json({ notice: modelResponse.data.notice });
+  } catch (err) {
+    console.error('Error generating notice:', err.message);
+    res.status(502).json({ error: 'Failed to generate legal notice from AI model server.' });
   }
 });
 

@@ -40,6 +40,15 @@ export default function ChatView() {
   const [isListening, setIsListening] = useState(false);
   const [apiStatus, setApiStatus] = useState({ online: true, message: 'Server Connected' });
 
+  // Interactive legal interview states (Kaggle pipeline integration)
+  const [originalQuestion, setOriginalQuestion] = useState('');
+  const [clarifyingQuestions, setClarifyingQuestions] = useState([]);
+  const [caseFacts, setCaseFacts] = useState({});
+  const [clientLanguage, setClientLanguage] = useState('English');
+  const [isGeneratingNotice, setIsGeneratingNotice] = useState(false);
+  const [noticeText, setNoticeText] = useState('');
+  const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
+
   // Refs
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -225,6 +234,11 @@ export default function ChatView() {
     const promptText = textToSend.trim() || inputText.trim();
     if (!promptText && !selectedFile) return;
 
+    // Track the initial question of the interview loop
+    if (!originalQuestion) {
+      setOriginalQuestion(promptText);
+    }
+
     setInputText('');
     let uploadedFileMeta = null;
 
@@ -293,6 +307,18 @@ export default function ChatView() {
         setMessages(prev => [...prev, aiResponse]);
         setApiStatus({ online: true, message: 'Server Connected' });
 
+        // Store client-side facts and language from pipeline
+        if (aiResponse.case_facts) setCaseFacts(aiResponse.case_facts);
+        if (aiResponse.language) setClientLanguage(aiResponse.language);
+
+        // Handle interview state locking
+        if (aiResponse.needs_more_info) {
+          setClarifyingQuestions(aiResponse.clarifying_questions || []);
+        } else {
+          setClarifyingQuestions([]);
+          setOriginalQuestion('');
+        }
+
         // Update local history array dynamically with Mongoose database ID
         if (!currentChatId) {
           const newSessionId = aiResponse.chatId;
@@ -333,6 +359,104 @@ export default function ChatView() {
       }]);
     } finally {
       setIsAiTyping(false);
+    }
+  };
+
+  // Handle clarifying questions submission from the sub-form in ChatBubble
+  const handleClarifyingSubmit = async (answers) => {
+    const formattedPairs = clarifyingQuestions.map((q, idx) => `${q} -> ${answers[idx] || 'Not specified'}`);
+    
+    const userText = language === 'en' 
+      ? `Submitted interview details:\n\n${formattedPairs.map(p => `• ${p}`).join('\n')}`
+      : `साक्षात्कार विवरण प्रस्तुत किया:\n\n${formattedPairs.map(p => `• ${p}`).join('\n')}`;
+
+    const userMsg = {
+      sender: 'user',
+      text: userText,
+      timestamp: new Date().toISOString()
+    };
+    
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
+    setIsAiTyping(true);
+
+    let historyToSend = [];
+    let promptToSend = "";
+
+    if (formattedPairs.length > 0) {
+      historyToSend = [originalQuestion, ...formattedPairs.slice(0, -1)];
+      promptToSend = formattedPairs[formattedPairs.length - 1];
+    } else {
+      promptToSend = "Proceeding with current details";
+    }
+
+    try {
+      const res = await authFetch('/api/chat', {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt: promptToSend,
+          conversationHistory: historyToSend,
+          chatId: currentChatId,
+          language: language
+        })
+      });
+
+      if (res.ok) {
+        const aiResponse = await res.json();
+        setMessages(prev => [...prev, aiResponse]);
+        
+        if (aiResponse.case_facts) setCaseFacts(aiResponse.case_facts);
+        if (aiResponse.language) setClientLanguage(aiResponse.language);
+
+        if (aiResponse.needs_more_info) {
+          setClarifyingQuestions(aiResponse.clarifying_questions || []);
+        } else {
+          setClarifyingQuestions([]);
+          setOriginalQuestion('');
+        }
+      } else {
+        throw new Error('API server returned error');
+      }
+    } catch (err) {
+      console.error('Clarifying submit transaction failed:', err);
+      setApiStatus({ online: false, message: 'Server Error' });
+      setMessages(prev => [...prev, {
+        sender: 'ai',
+        text: 'Sorry, I encountered an error while processing your details. Please try resubmitting.',
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setIsAiTyping(false);
+    }
+  };
+
+  // Generate formal demand notice draft
+  const handleDraftNotice = async (factsToUse, langToUse) => {
+    setIsGeneratingNotice(true);
+    try {
+      const res = await authFetch('/api/draft-notice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          case_facts: factsToUse || caseFacts,
+          language: langToUse || clientLanguage || 'English'
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setNoticeText(data.notice);
+        setIsNoticeModalOpen(true);
+      } else {
+        alert('Failed to generate notice. Ensure the model server is online and running.');
+      }
+    } catch (err) {
+      console.error('Error in handleDraftNotice:', err);
+      alert('Network error generating demand notice.');
+    } finally {
+      setIsGeneratingNotice(false);
     }
   };
 
@@ -455,7 +579,13 @@ export default function ChatView() {
             /* Active message log */
             <div className="max-w-3xl mx-auto">
               {messages.map((msg, idx) => (
-                <ChatBubble key={idx} message={msg} />
+                <ChatBubble 
+                  key={idx} 
+                  message={msg} 
+                  onClarifyingSubmit={idx === messages.length - 1 ? handleClarifyingSubmit : undefined}
+                  onDraftNotice={idx === messages.length - 1 ? handleDraftNotice : undefined}
+                  isGeneratingNotice={isGeneratingNotice}
+                />
               ))}
               
               {/* Rendering typing simulation bubble */}
@@ -559,6 +689,40 @@ export default function ChatView() {
           </div>
         </div>
       </main>
+
+      {/* Premium Glassmorphic Notice Modal */}
+      {isNoticeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in animate-duration-200">
+          <div className="glass max-w-2xl w-full rounded-2xl border border-slate-800 shadow-2xl p-6 flex flex-col max-h-[85vh] relative animate-chat-bubble-left">
+            <h3 className="font-display font-bold text-lg text-white mb-3 flex items-center gap-2 border-b border-slate-900 pb-3">
+              <FileText size={18} className="text-accent-blue" />
+              <span>Draft Legal Demand Notice</span>
+            </h3>
+            
+            <div className="flex-1 overflow-y-auto bg-slate-950/60 border border-slate-850 p-4 rounded-xl text-slate-350 text-xs font-mono whitespace-pre-wrap leading-relaxed select-text">
+              {noticeText}
+            </div>
+
+            <div className="mt-4 flex items-center justify-end gap-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(noticeText);
+                  alert('Demand notice copied to clipboard!');
+                }}
+                className="py-2.5 px-4 bg-accent-blue hover:bg-accent-blue-hover text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer shadow-md"
+              >
+                Copy to Clipboard
+              </button>
+              <button
+                onClick={() => setIsNoticeModalOpen(false)}
+                className="py-2.5 px-4 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-350 hover:text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

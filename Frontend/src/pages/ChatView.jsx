@@ -283,7 +283,8 @@ export default function ChatView() {
         method: 'POST',
         body: JSON.stringify({
           prompt: promptText || `Review uploaded document ${uploadedFileMeta.name}`,
-          chatId: currentChatId
+          chatId: currentChatId,
+          language: language
         })
       });
 
@@ -553,7 +554,7 @@ export default function ChatView() {
             </form>
             
             <p className="text-[10px] text-slate-650 text-center mt-2.5">
-              {language === 'en' ? "LawAI provides instant analysis but does not constitute official legal advice. Verify important details." : "लॉएआई त्वरित विश्लेषण प्रदान करता है लेकिन आधिकारिक कानूनी सलाह का गठन नहीं करता है। महत्वपूर्ण विवरणों को सत्यापित करें।"}
+              {language === 'en' ? "Vakil Sahab provides instant analysis but does not constitute official legal advice. Verify important details." : "वकील साहब (Vakil Sahab) त्वरित विश्लेषण प्रदान करता है लेकिन आधिकारिक कानूनी सलाह का गठन नहीं करता है। महत्वपूर्ण विवरणों को सत्यापित करें।"}
             </p>
           </div>
         </div>

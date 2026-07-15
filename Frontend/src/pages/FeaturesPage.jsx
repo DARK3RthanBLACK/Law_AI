@@ -123,7 +123,7 @@ export default function FeaturesPage() {
       </section>
 
       <footer className="border-t border-slate-900 bg-slate-950/60 py-8 text-center text-xs text-slate-600">
-        &copy; {new Date().getFullYear()} LawAI Inc. All rights reserved.
+        &copy; {new Date().getFullYear()} Vakil Sahab Inc. All rights reserved.
       </footer>
     </div>
   );

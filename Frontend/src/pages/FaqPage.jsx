@@ -10,15 +10,15 @@ export default function FaqPage() {
 
   const faqs = language === 'en' ? [
     {
-      q: "Can LawAI replace an attorney or represent me in court?",
-      a: "No, LawAI provides AI-generated analysis, summaries, and educational guidance based on public statutes. It does not provide official legal representation or replace qualified legal counsel. Always consult a licensed attorney for official legal advice."
+      q: "Can Vakil Sahab replace an attorney or represent me in court?",
+      a: "No, Vakil Sahab provides AI-generated analysis, summaries, and educational guidance based on public statutes. It does not provide official legal representation or replace qualified legal counsel. Always consult a licensed attorney for official legal advice."
     },
     {
       q: "Is my uploaded document data secure and confidential?",
       a: "Yes, security is a priority. All uploaded files and chats are encrypted in transit and at rest. We do not use your proprietary documents to train public AI models."
     },
     {
-      q: "Does LawAI support legal jurisdictions outside the United States?",
+      q: "Does Vakil Sahab support legal jurisdictions outside the United States?",
       a: "Currently, our primary dataset covers US Federal law, state codes (including California, New York, Delaware), and common law principles. Support for EU and Commonwealth jurisdictions is currently in beta."
     },
     {
@@ -64,8 +64,8 @@ export default function FaqPage() {
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
                 {language === 'en'
-                  ? 'Answers to common queries regarding LawAI capabilities, data security, and limits.'
-                  : 'लॉएआई क्षमताओं, डेटा सुरक्षा और सीमाओं के संबंध में सामान्य प्रश्नों के उत्तर।'}
+                  ? 'Answers to common queries regarding Vakil Sahab capabilities, data security, and limits.'
+                  : 'वकील साहब (Vakil Sahab) क्षमताओं, डेटा सुरक्षा और सीमाओं के संबंध में सामान्य प्रश्नों के उत्तर।'}
               </p>
             </div>
           </ScrollReveal>
@@ -107,7 +107,7 @@ export default function FaqPage() {
       </section>
 
       <footer className="border-t border-slate-900 bg-slate-950/60 py-8 text-center text-xs text-slate-600">
-        &copy; {new Date().getFullYear()} LawAI Inc. All rights reserved.
+        &copy; {new Date().getFullYear()} Vakil Sahab Inc. All rights reserved.
       </footer>
     </div>
   );

@@ -143,7 +143,7 @@ router.delete('/history/:id', authMiddleware, async (req, res) => {
 
 // POST /api/chat - Proxy prompt to the Gemma model FastAPI server (Protected)
 router.post('/chat', authMiddleware, async (req, res) => {
-  const { prompt, chatId, conversationHistory } = req.body;
+  const { prompt, chatId, conversationHistory, language } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required.' });
@@ -160,24 +160,13 @@ router.post('/chat', authMiddleware, async (req, res) => {
     reply = 'The AI model server is not configured. Please set MODEL_API_URL in the backend .env file and ensure the Kaggle notebook is running.';
   } else {
     try {
-      // Basic rule-based responses based on prompt keywords to feel alive
-      // let reply = `I have received your prompt: "${prompt}". This is a mock AI response simulating a backend assistant. Once integrated, this request will be forwarded to your FastAPI model server for real-time natural language generation.`;
-
-      // const normalizedPrompt = prompt.toLowerCase();
-      // if (normalizedPrompt.includes('contract') || normalizedPrompt.includes('agreement') || normalizedPrompt.includes('lease')) {
-      //   reply = `Regarding your inquiry about contracts: Under standard legal frameworks, contracts require mutual assent, offer, acceptance, and consideration. For precise contract review, our system will utilize NLP models to parse liability, termination, and indemnity clauses.`;
-      // } else if (normalizedPrompt.includes('patent') || normalizedPrompt.includes('ip') || normalizedPrompt.includes('trademark') || normalizedPrompt.includes('copyright')) {
-      //   reply = `Intellectual property law covers patents, trademarks, copyrights, and trade secrets. This mock assistant notes that your question concerns IP protection. When connected to the production AI engine, it will analyze your concept against current IP databases.`;
-      // } else if (normalizedPrompt.includes('hello') || normalizedPrompt.includes('hi') || normalizedPrompt.includes('hey')) {
-      //   reply = `Hello! I am your AI Assistant. How can I help you today? You can ask me legal questions, document review tasks, or request text summaries.`;
-      // }
       // Build the history array expected by run_interactively.
       // conversationHistory is optional; we always append the current prompt.
       const history = Array.isArray(conversationHistory) ? conversationHistory : [];
 
       const modelResponse = await axios.post(
         `${modelApiUrl}/agent`,
-        { prompt, history },
+        { prompt, history, language },
         { timeout: 120000 } // 2-minute timeout — model inference can be slow
       );
 

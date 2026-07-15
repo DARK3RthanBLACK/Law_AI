@@ -1,7 +1,7 @@
 export const translations = {
   en: {
     // Navbar/Header
-    logoText: "LawAI",
+    logoText: "Vakil Sahab",
     login: "Log In",
     register: "Register",
     logout: "Log Out",
@@ -13,7 +13,7 @@ export const translations = {
     // Hero Section
     heroBadge: "AI Legal Assistant",
     heroTitle: "Democratizing Legal Access Through AI",
-    heroSubtitle: "Meet LawAI: The private, fast, and accessible AI Legal Research Engine. It parses complex regulations, extracts contract liabilities, and explains rights in simple terms.",
+    heroSubtitle: "Meet Vakil Sahab: The private, fast, and accessible AI Legal Research Engine. It parses complex regulations, extracts contract liabilities, and explains rights in simple terms.",
     getStarted: "Get Started Now",
     analyzeDoc: "Analyze Documents",
     searchPlaceholder: "Ask a legal question (e.g., \"What is a provisional patent?\")...",
@@ -53,7 +53,7 @@ export const translations = {
     deleteChat: "Delete session",
 
     // Chat Panel
-    chatWelcomeTitle: "LawAI Research Panel",
+    chatWelcomeTitle: "Vakil Sahab Research Panel",
     chatWelcomeDesc: "Consult on legal questions or analyze contract files. Start typing below or choose one of our quick templates to begin.",
     chatWelcomeTemplateContract: "Contract Clause",
     chatWelcomeTemplateContractText: "Explain standard NDA termination rules.",
@@ -76,7 +76,7 @@ export const translations = {
   },
   hi: {
     // Navbar/Header
-    logoText: "लॉएआई (LawAI)",
+    logoText: "वकील साहब (Vakil Sahab)",
     login: "लॉग इन करें",
     register: "पंजीकरण",
     logout: "लॉग आउट",
@@ -88,7 +88,7 @@ export const translations = {
     // Hero Section
     heroBadge: "एआई कानूनी सहायक",
     heroTitle: "एआई के माध्यम से कानूनी पहुंच का लोकतंत्रीकरण",
-    heroSubtitle: "लॉएआई (LawAI) से मिलें: निजी, तेज़ और सुलभ एआई कानूनी अनुसंधान इंजन। यह जटिल नियमों को पार्स करता है, अनुबंध देनदारियों को निकालता है, और सरल शब्दों में अधिकारों की व्याख्या करता है।",
+    heroSubtitle: "वकील साहब (Vakil Sahab) से मिलें: निजी, तेज़ और सुलभ एआई कानूनी अनुसंधान इंजन। यह जटिल नियमों को पार्स करता है, अनुबंध देनदारियों को निकालता है, और सरल शब्दों में अधिकारों की व्याख्या करता है।",
     getStarted: "अभी शुरू करें",
     analyzeDoc: "दस्तावेज़ों का विश्लेषण करें",
     searchPlaceholder: "एक कानूनी प्रश्न पूछें (जैसे, \"अनंतिम पेटेंट क्या है?\")...",
@@ -128,7 +128,7 @@ export const translations = {
     deleteChat: "सत्र हटाएं",
 
     // Chat Panel
-    chatWelcomeTitle: "लॉएआई (LawAI) शोध पैनल",
+    chatWelcomeTitle: "वकील साहब (Vakil Sahab) शोध पैनल",
     chatWelcomeDesc: "कानूनी प्रश्नों पर परामर्श करें या अनुबंध फ़ाइलों का विश्लेषण करें। नीचे टाइप करना शुरू करें या आरंभ करने के लिए हमारे त्वरित टेम्प्लेट में से एक चुनें।",
     chatWelcomeTemplateContract: "अनुबंध खंड",
     chatWelcomeTemplateContractText: "मानक एनडीए समाप्ति नियमों की व्याख्या करें।",

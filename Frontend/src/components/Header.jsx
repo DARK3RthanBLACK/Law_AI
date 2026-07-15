@@ -37,8 +37,8 @@ export default function Header() {
             <Gavel size={18} />
           </div>
           <span className="font-sans font-bold text-lg tracking-tight">
-            <span className="text-white">Law</span>
-            <span className="text-accent-blue">AI</span>
+            <span className="text-white">Vakil</span>
+            <span className="text-accent-blue">Sahab</span>
           </span>
         </Link>
 

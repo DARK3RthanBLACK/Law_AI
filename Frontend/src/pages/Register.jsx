@@ -86,7 +86,7 @@ export default function Register() {
             <Gavel size={24} />
           </div>
           <span className="font-display font-bold text-2xl tracking-tight text-white">
-            Law<span className="text-accent-blue">AI</span>
+            Vakil<span className="text-accent-blue">Sahab</span>
           </span>
         </Link>
 
@@ -129,7 +129,7 @@ export default function Register() {
               <Gavel size={20} />
             </div>
             <span className="font-display font-bold text-xl tracking-tight text-white">
-              Law<span className="text-accent-blue">AI</span>
+              Vakil<span className="text-accent-blue">Sahab</span>
             </span>
           </Link>
           <h2 className="text-2xl font-display font-semibold text-white tracking-tight">

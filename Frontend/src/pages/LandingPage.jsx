@@ -329,10 +329,10 @@ export default function LandingPage() {
               <div className="p-1.5 bg-accent-blue/10 rounded-md text-accent-blue border border-accent-blue/20">
                 <Gavel size={16} />
               </div>
-              <span className="font-sans font-bold text-lg text-white">LawAI</span>
+              <span className="font-sans font-bold text-lg text-white">Vakil Sahab</span>
             </div>
             <p className="text-slate-500 text-xs max-w-sm leading-relaxed">
-              LawAI provides automated AI insights and document reviews. We make legal terms understandable and clear, but do not provide legal representation.
+              Vakil Sahab provides automated AI insights and document reviews. We make legal terms understandable and clear, but do not provide legal representation.
             </p>
           </div>
           <div>
@@ -353,7 +353,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 border-t border-slate-900/60 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-650 gap-4 text-left">
-          <span>&copy; {new Date().getFullYear()} LawAI Inc. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} Vakil Sahab Inc. All rights reserved.</span>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 text-slate-650"><Info size={12} /> Legal education utility only</span>
           </div>

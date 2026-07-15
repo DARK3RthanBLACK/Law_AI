@@ -43,7 +43,7 @@ export default function Sidebar({
               <Gavel size={18} />
             </div>
             <span className="font-display font-bold text-lg tracking-tight text-white">
-              Law<span className="text-accent-blue">AI</span>
+              Vakil<span className="text-accent-blue">Sahab</span>
             </span>
           </div>
 
@@ -138,7 +138,7 @@ export default function Sidebar({
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-slate-250 truncate">{user?.name || 'Legal User'}</div>
-              <div className="text-xs text-slate-500 truncate">{user?.email || 'user@lawai.com'}</div>
+              <div className="text-xs text-slate-500 truncate">{user?.email || 'user@vakilsahab.com'}</div>
             </div>
           </div>
 

@@ -88,7 +88,7 @@ export default function HowItWorksPage() {
                 <span>{language === 'en' ? 'Auditing Pipeline' : 'ऑडिटिंग पाइपलाइन'}</span>
               </div>
               <h1 className="font-display font-bold text-4xl sm:text-5xl text-white mb-4">
-                {language === 'en' ? 'How LawAI Works' : 'लॉएआई कैसे काम करता है'}
+                {language === 'en' ? 'How Vakil Sahab Works' : 'वकील साहब (Vakil Sahab) कैसे काम करता है'}
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
                 {language === 'en'
@@ -174,7 +174,7 @@ export default function HowItWorksPage() {
       </section>
 
       <footer className="border-t border-slate-900 bg-slate-950/60 py-8 text-center text-xs text-slate-650">
-        &copy; {new Date().getFullYear()} LawAI Inc. All rights reserved.
+        &copy; {new Date().getFullYear()} Vakil Sahab Inc. All rights reserved.
       </footer>
     </div>
   );

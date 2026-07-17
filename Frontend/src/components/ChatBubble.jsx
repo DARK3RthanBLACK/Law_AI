@@ -41,9 +41,27 @@ export default function ChatBubble({
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
-    // Auto-detect Hindi characters
-    const containsHindi = /[\u0900-\u097F]/.test(message.text);
-    utterance.lang = containsHindi ? 'hi-IN' : 'en-IN';
+    // Auto-detect language based on Unicode blocks:
+    // Malayalam range: \u0D00-\u0D7F
+    // Devanagari/Hindi range: \u0900-\u097F
+    let langCode = 'en-IN';
+    if (/[\u0D00-\u0D7F]/.test(message.text)) {
+      langCode = 'ml-IN';
+    } else if (/[\u0900-\u097F]/.test(message.text)) {
+      langCode = 'hi-IN';
+    }
+    
+    utterance.lang = langCode;
+
+    // Explicitly query and bind matching system voices (resolves fallback issues in Chrome/Safari)
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const voices = window.speechSynthesis.getVoices();
+      const matchingVoice = voices.find(v => v.lang.toLowerCase() === langCode.toLowerCase())
+                         || voices.find(v => v.lang.toLowerCase().startsWith(langCode.substring(0, 2)));
+      if (matchingVoice) {
+        utterance.voice = matchingVoice;
+      }
+    }
 
     // Hook listeners
     utterance.onend = () => setIsSpeaking(false);
